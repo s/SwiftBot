@@ -1,1 +1,1 @@
-web: .build/relese/SwiftBot --port $PORT
+web: .build/release/SwiftBot --port $PORT
