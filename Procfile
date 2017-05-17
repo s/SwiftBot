@@ -1,1 +1,1 @@
-web: perfectserverhttp --port $PORT
+web: .build/relese/SwiftBot --port $PORT
