@@ -1,6 +1,7 @@
 import PerfectLib
 import PerfectHTTP
 import PerfectHTTPServer
+import Foundation
 
 // An example request handler.
 // This 'handler' function can be referenced directly in the configuration below.
@@ -15,11 +16,19 @@ func handler(data: [String:Any]) throws -> RequestHandler {
 	}
 }
 
+func providePort() -> Int {
+    if let port = ProcessInfo.processInfo.environment["PORT"] {
+        return Int(port)!;
+    }
+    
+    return 8080;
+}
+
 // Configuration data for two example servers.
 // This example configuration shows how to launch one or more servers 
 // using a configuration dictionary.
 
-let port1 = 8080, port2 = 8181
+let port = providePort()
 
 let confData = [
 	"servers": [
@@ -30,7 +39,7 @@ let confData = [
 		//	* Performs content compression on outgoing data when appropriate.
 		[
 			"name":"localhost",
-			"port":port1,
+			"port":port,
 			"routes":[
 				["method":"get", "uri":"/", "handler":handler],
 				["method":"get", "uri":"/**", "handler":PerfectHTTPServer.HTTPHandler.staticFiles,
@@ -44,18 +53,8 @@ let confData = [
 				"name":PerfectHTTPServer.HTTPFilter.contentCompression,
 				]
 			]
-		],
-		// Configuration data for another server which:
-		//	* Redirects all traffic back to the first server.
-		[
-			"name":"localhost",
-			"port":port2,
-			"routes":[
-				["method":"get", "uri":"/**", "handler":PerfectHTTPServer.HTTPHandler.redirect,
-				 "base":"http://localhost:\(port1)"]
-			]
 		]
-	]
+    ]
 ]
 
 do {
