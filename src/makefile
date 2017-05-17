@@ -1,9 +1,10 @@
 # Makefile for SwiftBot
 
-TARGET = Sources
+TARGET = SwiftBot
+SRC = Sources
 OS = $(shell uname)
 
-SWIFT_FILES = $(TARGET)/main.swift
+SWIFT_FILES = $(SRC)/main.swift
 
 PERFECT_ROOT = /app/.delta/usr/src/perfect/PerfectLib
 
@@ -43,3 +44,14 @@ $(TARGET): modulecache
 
 clean:
 	@rm *.o
+
+# Few shortcuts for swift package manager
+
+test:
+	xcodebuild -project SwiftBot.xcodeproj -scheme SwiftBot build test
+
+generate:
+	swift package generate-xcodeproj
+
+build:
+	swift build
