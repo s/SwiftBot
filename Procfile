@@ -1,1 +1,1 @@
-web: perfectserverhttp--port $PORT
+web: perfectserverhttp --port $PORT
