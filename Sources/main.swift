@@ -16,6 +16,15 @@ func handler(data: [String:Any]) throws -> RequestHandler {
 	}
 }
 
+func simplePrintWebhook(data: [String:Any]) throws -> RequestHandler {
+    return {
+        request, response in
+        print("query: \(request.queryParams)");
+        print("data: \(request.postParams)");
+        response.completed(status: .ok)
+    }
+}
+
 func providePort() -> Int {
     if let port = ProcessInfo.processInfo.environment["PORT"] {
         return Int(port)!;
@@ -41,10 +50,9 @@ let confData = [
 			"name":"localhost",
 			"port":port,
 			"routes":[
-				["method":"get", "uri":"/", "handler":handler],
-				["method":"get", "uri":"/**", "handler":PerfectHTTPServer.HTTPHandler.staticFiles,
-				 "documentRoot":"./webroot",
-				 "allowResponseFilters":true]
+				["method":"get",  "uri":"/", "handler":handler],
+				["methid":"get",  "uri":"/webhook", "handler": simplePrintWebhook],
+                ["methid":"post", "uri":"/webhook", "handler": simplePrintWebhook],
 			],
 			"filters":[
 				[
