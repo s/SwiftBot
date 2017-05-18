@@ -16,12 +16,35 @@ func handler(data: [String:Any]) throws -> RequestHandler {
 	}
 }
 
+let WebHookToken = "mega-secret-token-1"
+
+// Test: curl  -X GET "http://localhost:8080//webhook?hub.mode=subscribe&hub.challenge=27493587&hub.verify_token=mega-secret-token-1"
 func simplePrintWebhook(data: [String:Any]) throws -> RequestHandler {
     return {
         request, response in
+        
         print("query: \(request.queryParams)");
         print("data: \(request.postParams)");
-        response.completed(status: .ok)
+        
+        let hubMode = request.param(name: "hub.mode")
+        let hubToken = request.param(name: "hub.verify_token")
+        let hubChallenge = request.param(name: "hub.challenge")
+        
+        if let mode = hubMode, mode == "subscribe" {
+            
+            if let token = hubToken, let challenge = hubChallenge, token == WebHookToken {
+                print("Validating webhook");
+            
+                response.appendBody(string: challenge);
+                response.completed(status: .ok)
+            }
+            else {
+                response.completed(status: .forbidden);
+            }
+        }
+        else {
+            response.completed(status: .ok)
+        }
     }
 }
 
