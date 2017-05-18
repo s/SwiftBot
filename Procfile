@@ -1,1 +1,1 @@
-web: perfectserverhttp --port $PORT
+web: .build/release/SwiftBot --port $PORT
