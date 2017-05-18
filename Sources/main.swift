@@ -3,6 +3,19 @@ import PerfectHTTP
 import PerfectHTTPServer
 import Foundation
 
+#if os(Linux)
+    import Glibc
+#else
+    import Darwin
+#endif
+
+enum Logger {
+    static func info(_ string: String) {
+        fputs(string, stdout)
+        fflush(stdout)
+    }
+}
+
 // An example request handler.
 // This 'handler' function can be referenced directly in the configuration below.
 func handler(data: [String:Any]) throws -> RequestHandler {
@@ -23,8 +36,8 @@ func simplePrintWebhook(data: [String:Any]) throws -> RequestHandler {
     return {
         request, response in
         
-        print("query: \(request.queryParams)");
-        print("data: \(request.postParams)");
+        Logger.info("query: \(request.queryParams)\n")
+        Logger.info("data: \(request.postParams)\n")
         
         let hubMode = request.param(name: "hub.mode")
         let hubToken = request.param(name: "hub.verify_token")
@@ -33,7 +46,7 @@ func simplePrintWebhook(data: [String:Any]) throws -> RequestHandler {
         if let mode = hubMode, mode == "subscribe" {
             
             if let token = hubToken, let challenge = hubChallenge, token == WebHookToken {
-                print("Validating webhook");
+                Logger.info("Validating webhook\n");
             
                 response.appendBody(string: challenge);
                 response.completed(status: .ok)
