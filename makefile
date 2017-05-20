@@ -1,4 +1,5 @@
 # Makefile for SwiftBot
+.DEFAULT_GOAL := build
 
 # Few shortcuts for swift package manager
 
