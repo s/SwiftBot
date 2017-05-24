@@ -64,7 +64,6 @@ fastlane/screenshots
 
 Packages/
 PerfectTemplate.xcodeproj
-Tests/
 webroot/
 
 .DS_Store
