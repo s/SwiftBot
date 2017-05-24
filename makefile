@@ -10,3 +10,7 @@ generate:
 
 build:
 	swift build
+
+debug:
+	.build/debug/SwiftBot
+
