@@ -4,11 +4,11 @@ let package = Package(
 	name: "SwiftBot",
 	targets: [
         Target(
-            name:"Messanger",
+            name:"Messenger",
             dependencies:[]),
         Target(
             name:"SwiftBot",
-            dependencies:["Messanger"])
+            dependencies:["Messenger"])
     ],
 	dependencies: [
 		.Package(url: "https://github.com/PerfectlySoft/Perfect-HTTPServer.git", majorVersion: 2)
