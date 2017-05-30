@@ -18,10 +18,11 @@ do {
     server.serverPort = UInt16(providePort())
     server.documentRoot = "./webroot"
     
+    server.setRequestFilters([(FacebookHUBRequestFilter(), .high)])
     server.addRoutes(routes())
     
     // Set filters
-    server.setResponseFilters([(try HTTPFilter.contentCompression(data: [:]), .high)])
+    
     
     // Start
     try server.start()
