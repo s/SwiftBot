@@ -12,7 +12,7 @@ struct Constants {
     
     struct FacebookAPI {
         
-        static let WebHookToken = "mega-secret-token-1"
+      
     }
 
 }
