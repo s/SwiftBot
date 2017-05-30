@@ -9,18 +9,7 @@
 import Foundation
 import PerfectHTTP
 import PerfectHTTPServer
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
 
-enum Logger {
-    static func info(_ string: String) {
-        fputs(string, stdout)
-        fflush(stdout)
-    }
-}
 
 internal func routes() -> Routes {
     // Set routes
