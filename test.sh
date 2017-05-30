@@ -1,6 +1,6 @@
 
 echo Send Subscribe Mode
-curl  -X GET "http://localhost:8080//webhook?hub.mode=subscribe&hub.challenge=27493587&hub.verify_token=mega-secret-token-1"
+curl  -X GET "http://localhost:8080//webhook?hub.mode=subscribe&hub.challenge=27493587&hub.verify_token=test-token"
 
 # echo Send message empty message to the bot
 # curl -X POST -H "Content-Type: application/json" -d '{}' http://127.0.0.1:8080/webhook
