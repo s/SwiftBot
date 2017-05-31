@@ -10,6 +10,7 @@ import Foundation
 import PerfectHTTP
 import PerfectHTTPServer
 import Storage
+import PerfectCURL
 
 internal func createHtmlRoute() -> Route {
     return Route(method: .get, uri: "/", handler: { request, response in
@@ -25,8 +26,9 @@ internal func createWebhookRoutes() -> Routes {
     var webhook = Routes(baseUri: "/webhook")
     let webhookHandler: RequestHandler = { (request, response) in
         
+        parseRequestAndReplyWithEcho(request);
         logRequest(request);
-
+    
         response.completed(status: .ok)
     }
     
@@ -73,6 +75,51 @@ internal func createStorageRoutes() -> Routes {
     return routes;
 }
 
+
+private func parseRequestAndReplyWithEcho(_ request: HTTPRequest) {
+    if let postBodyBytes = request.postBodyBytes {
+        let postData = Data(bytes: postBodyBytes)
+        if let json = try? JSONSerialization.jsonObject(with: postData, options: []) as? [String: Any] {
+            
+            
+            if let entries = json?["entry"] as? [[String:Any]] {
+                for entry in entries {
+                    if let messaging = entry["messaging"] as? [[String:Any]] {
+                        for message in messaging {
+                            
+                            if let sender = message["sender"] as? [String:String], let senderId = sender["id"] {
+                                
+                                echoBack(senderId: senderId)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private func echoBack(senderId: String) {
+    if let accessToken = ProcessInfo.processInfo.environment["FACEBOOK_PAGE_ACCESS_TOKEN"] {
+        let messageJson = "{\"recipient\": { \"id\": \"\(senderId)\" }, \"message\": { \"text\": \"hello, world!\"}}"
+        do {
+            let url = "https://graph.facebook.com/v2.6/me/messages?access_token=\(accessToken)"
+            let res = try CURLRequest(url,
+                                       .httpMethod(.post),
+                                       .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
+                                       .postString(messageJson)
+            ).perform().bodyString
+            
+            HerokuLogger.info(res);
+        }
+        catch let error as NSError {
+            fatalError("\(error)")
+        }
+    }
+    else {
+        HerokuLogger.info("FACEBOOK_PAGE_ACCESS_TOKEN is not set");
+    }
+}
 
 private func logRequest(_ request: HTTPRequest) {
     HerokuLogger.info("query: \(request.queryParams)\n")
