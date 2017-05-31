@@ -9,9 +9,12 @@ func handler(data: [String:Any]) throws -> RequestHandler {
 		request, response in
 		// Respond with a simple message.
 		response.setHeader(.contentType, value: "text/html")
-		response.appendBody(string: "<html><title>Hello, world!</title><body>Hello, world!</body></html>")
-		// Ensure that response.completed() is called when your processing is done.
-		response.completed()
+
+        let s = SpellCheker()
+        s.sendRequest(text: "I wnt to drnk choclat mlk") {text in
+            response.appendBody(string: "<html><title>Some title</title><body>" + (text != nil ? text! : "Error") + "</body></html>")
+            response.completed()
+        }
 	}
 }
 
