@@ -42,27 +42,3 @@ class SpellCheker {
     }
 }
 
-/*
- 
- NSURLSessionConfiguration *defaultSessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
- NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:defaultSessionConfiguration];
- 
- NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://montanaflynn-spellcheck.p.mashape.com/check/?text=I+want+lae+and+capucin+some+mlk."]];
- NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
- 
- [urlRequest addValue:@"OA5qHL58kvmshkz5xa4FQowNtD3tp1cD0n2jsnPY9TFf28l8Ka" forHTTPHeaderField:@"X-Mashape-Key"];
- [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Accept"];
- 
- [urlRequest setHTTPMethod:@"GET"];
- 
- NSURLSessionDataTask *dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
- // Handle your response here
- NSLog(@"response :%@", response);
- NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
- NSLog(@"> %@", s);
- }];
- 
- // Fire the request
- [dataTask resume];
- 
- */
