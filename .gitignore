@@ -64,5 +64,12 @@ fastlane/screenshots
 
 Packages/
 PerfectTemplate.xcodeproj
-Tests/
 webroot/
+
+.DS_Store
+
+# XCode Project
+SwiftBot.xcodeproj
+
+# Added for now as we don't want to lock-in versions of dependencies just yet
+Package.pins
