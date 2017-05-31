@@ -9,6 +9,7 @@
 import Foundation
 import PerfectHTTP
 import PerfectHTTPServer
+import Storage
 
 internal func createHtmlRoute() -> Route {
     return Route(method: .get, uri: "/", handler: { request, response in
@@ -31,9 +32,47 @@ internal func createWebhookRoutes() -> Routes {
     
     webhook.add(method: .get,  uri: "", handler: webhookHandler)
     webhook.add(method: .post, uri: "", handler: webhookHandler)
-    
+
     return webhook;
 }
+
+internal func createStorageRoutes() -> Routes {
+    var routes = Routes(baseUri: "/storage")
+
+    let storageFetchHandler: RequestHandler = { (request, response) in
+        response.setHeader(.contentType, value: "text/plain")
+        do {
+            let storage = try Storage();
+            let value = try storage.fetch( request.param(name: "key")! )
+            response.appendBody(string: "Value: \(String(describing: value))")
+            response.completed(status: .ok)
+        } catch {
+            response.completed(status: .internalServerError)
+        }
+        
+    }
+
+    let storageStoreHandler: RequestHandler  = { (request, response) in
+        guard let key = request.param(name: "key") else { return }
+        guard let value = request.param(name: "value") else { return }
+        
+        response.setHeader(.contentType, value: "text/plain")
+        do {
+            let storage = try Storage();
+            try storage.store( key, value )
+            response.appendBody(string: "Stored")
+            response.completed(status: .ok)
+        } catch {
+            response.completed(status: .internalServerError)
+        }
+     
+    }
+
+    routes.add(method: .get,  uri: "/fetch", handler: storageFetchHandler)
+    routes.add(method: .get,  uri: "/store", handler: storageStoreHandler)
+    return routes;
+}
+
 
 private func logRequest(_ request: HTTPRequest) {
     HerokuLogger.info("query: \(request.queryParams)\n")
@@ -46,6 +85,7 @@ internal func routes() -> Routes {
     
     routes.add(createHtmlRoute())
     routes.add(createWebhookRoutes())
+    routes.add(createStorageRoutes())
     
     return routes;
 }
