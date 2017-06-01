@@ -112,7 +112,7 @@ private func echoBack(senderId: String) {
             
             HerokuLogger.info(res);
         }
-        catch let error as NSError {
+        catch let error {
             fatalError("\(error)")
         }
     }

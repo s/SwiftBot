@@ -21,9 +21,9 @@ class SpellCheker {
             let suggestion = self.suggestionFromJSON(json: json)
             completion(suggestion)
         }
-        catch let error as NSError {
+        catch let error {
             fatalError("\(error)")
-        }
+        }        
     }
     
     private func textInBodyFormat(text: String) -> String
