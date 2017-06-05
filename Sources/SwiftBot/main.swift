@@ -4,16 +4,12 @@ import PerfectHTTPServer
 import Foundation
 
 func providePort() -> Int {
-    if let port = ProcessInfo.processInfo.environment["PORT"] {
-        return Int(port)!;
-    }
-    
-    return 8080;
+    return Configuration().port
 }
 
 func provideRequestFilters() -> [(HTTPRequestFilter, HTTPFilterPriority)]
 {
-    let token = ProcessInfo.processInfo.environment["FACEBOOK_SUBSCRIBE_TOKEN"] ?? "test-token"
+    let token = Configuration().fbSubscribeToken
     
     return [
         (FacebookHUBRequestFilter(token: token), .high)

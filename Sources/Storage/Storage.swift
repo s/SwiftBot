@@ -20,9 +20,8 @@ public class Storage {
         case dsnError
     }
 
-    public init() throws {
+    public init(dsn dsnString: String) throws {
         mysql = MySQL();
-        let dsnString = ProcessInfo.processInfo.environment["CLEARDB_DATABASE_URL"] ?? "mysql://root@127.0.0.1/swiftbot"
         guard let dsn = URLComponents(string:dsnString) else { throw StorageError.dsnError }
         if dsn.scheme != "mysql" { throw StorageError.dsnError }
         

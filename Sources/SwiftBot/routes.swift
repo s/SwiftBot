@@ -44,7 +44,7 @@ internal func createStorageRoutes() -> Routes {
     let storageFetchHandler: RequestHandler = { (request, response) in
         response.setHeader(.contentType, value: "text/plain")
         do {
-            let storage = try Storage();
+            let storage = try Storage(dsn: Configuration().dbURL);
             let value = try storage.fetch( request.param(name: "key")! )
             response.appendBody(string: "Value: \(String(describing: value))")
             response.completed(status: .ok)
@@ -60,7 +60,7 @@ internal func createStorageRoutes() -> Routes {
         
         response.setHeader(.contentType, value: "text/plain")
         do {
-            let storage = try Storage();
+            let storage = try Storage(dsn: Configuration().dbURL);
             try storage.store( key, value )
             response.appendBody(string: "Stored")
             response.completed(status: .ok)
@@ -100,24 +100,20 @@ private func parseRequestAndReplyWithEcho(_ request: HTTPRequest) {
 }
 
 private func echoBack(senderId: String) {
-    if let accessToken = ProcessInfo.processInfo.environment["FACEBOOK_PAGE_ACCESS_TOKEN"] {
-        let messageJson = "{\"recipient\": { \"id\": \"\(senderId)\" }, \"message\": { \"text\": \"hello, world!\"}}"
-        do {
-            let url = "https://graph.facebook.com/v2.6/me/messages?access_token=\(accessToken)"
-            let res = try CURLRequest(url,
-                                       .httpMethod(.post),
-                                       .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
-                                       .postString(messageJson)
+    let accessToken = Configuration().fbPageAccessToken
+    let messageJson = "{\"recipient\": { \"id\": \"\(senderId)\" }, \"message\": { \"text\": \"hello, world!\"}}"
+    do {
+        let url = "https://graph.facebook.com/v2.6/me/messages?access_token=\(accessToken)"
+        let res = try CURLRequest(url,
+                                  .httpMethod(.post),
+                                  .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
+                                  .postString(messageJson)
             ).perform().bodyString
-            
-            HerokuLogger.info(res);
-        }
-        catch let error {
-            fatalError("\(error)")
-        }
+        
+        HerokuLogger.info(res);
     }
-    else {
-        HerokuLogger.info("FACEBOOK_PAGE_ACCESS_TOKEN is not set");
+    catch let error {
+        fatalError("\(error)")
     }
 }
 
