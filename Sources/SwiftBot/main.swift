@@ -2,6 +2,7 @@ import PerfectLib
 import PerfectHTTP
 import PerfectHTTPServer
 import Foundation
+import Messenger
 
 func providePort() -> Int {
     return Configuration().port
@@ -15,9 +16,17 @@ do {
     server.documentRoot = "./webroot"
     
     // Init service
-    let token = ProcessInfo.processInfo.environment["FACEBOOK_SUBSCRIBE_TOKEN"] ?? "test-token"
-    let facebook = Facebook(token: token)
+    let configuration = Configuration()
+    let token = configuration.fbSubscribeToken
+    let accessToken = configuration.fbPageAccessToken
+    let facebook = Facebook(secretToken: token, accessToken: accessToken)
     
+    // Store this in vm for now
+    let messenger = Messenger(services: [facebook])
+    messenger.updatesHandler.subscribe{ (message) in
+        let replay = ReplayMessage(recipient: message.senderId, text: "Hello, world!")
+        messenger.send(message: replay)
+    }
     // Set routes
     server.addRoutes(routes([facebook]))
     

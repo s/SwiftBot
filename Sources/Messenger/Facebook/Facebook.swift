@@ -1,18 +1,53 @@
 //
-//  Messenger.swift
+//  Facebook.swift
 //  SwiftBot
 //
 
 import Foundation
+import PerfectCURL
 
-
-public class Messenger {
-    public static func parse(json: JSON) throws -> [Entry] {
+public final class Facebook: Service {
+    internal let accessToken: String
+    public let secretToken: String
+    public weak var delegate: ServiceDelegate?
+    
+    public init(secretToken: String, accessToken: String) {
+        self.secretToken = secretToken;
+        self.accessToken = accessToken
+    }
+    
+    @discardableResult
+    public func parse(json: JSON) throws -> [Entry] {
         do {
             let request = try Request.mapped(json: json)
+            if let delegate = self.delegate {
+                request.entry.forEach{ $0.messaging.forEach{ (msg) in
+                    if msg.type == .message, let message = msg as? FBMessage {
+                        delegate.receive(message: message)
+                    }
+                    }
+                }
+            }
             return request.entry
-        } catch {
-            throw error
+        }
+    }
+    
+    // Send
+    
+    public func send(message: ReplayMessage) {
+        let messageJson = "{\"recipient\": { \"id\": \"\(message.recipient)\" }, \"message\": { \"text\": \"\(message.text)\"}}"
+        do {
+            let url = "https://graph.facebook.com/v2.6/me/messages?access_token=\(self.accessToken)"
+            let res = try CURLRequest(url,
+                                      .httpMethod(.post),
+                                      .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
+                                      .postString(messageJson)
+                ).perform().bodyString
+            debugPrint("Response \(res)")
+//            HerokuLogger.info(res);
+        }
+        catch let error {
+            fatalError("\(error)")
         }
     }
 }
@@ -43,7 +78,7 @@ public class AbstractMessage {
         case read
         case unknown
     }
-
+    
     public let type: Type
     public let sender: String
     public let recipient: String
@@ -59,15 +94,15 @@ public class AbstractMessage {
 
 // MARK Message
 
-public final class Message: AbstractMessage {
+public final class FBMessage: AbstractMessage {
     public let mid: String
-    public let text: String
+    internal let _text: String
     public let attachments: [Attachment]?
     public let quickReply: QuickReply?
     
     internal init(sender: String, recipient: String, timestamp: Date, mid: String, text: String, attachments: [Attachment]?, quickReply: QuickReply?) {
         self.mid = mid
-        self.text = text
+        self._text = text
         self.attachments = attachments
         self.quickReply = quickReply
         super.init(type: .message, sender: sender, recipient: recipient, timestamp: timestamp)
@@ -97,6 +132,22 @@ public struct Attachment {
 
 public struct QuickReply {
     let payload: String
+}
+
+extension FBMessage: Message {
+    public var text: String? {
+        return _text
+    }
+    
+    public var id: String {
+        return mid
+    }
+    
+    public var senderId: String {
+        return sender
+    }
+
+    
 }
 
 // MARK Delivery
@@ -133,7 +184,7 @@ public final class Read: AbstractMessage {
 extension Request: Mappable {
     public static func mapped(json: JSON) throws -> Request {
         return try Request(object: json => "object",
-                            entry: json => "entry"
+                           entry: json => "entry"
         )
     }
 }
@@ -151,13 +202,13 @@ extension AbstractMessage {
     static func message(json: Any) -> AbstractMessage? {
         do {
             if let message: Any = try json =>? KeyPath("message", optional: true) {
-                return try Message(sender: json => "sender" => "id",
-                                   recipient: json => "recipient" => "id",
-                                   timestamp: json => "timestamp",
-                                   mid: message => "mid",
-                                   text: message => "text",
-                                   attachments: nil,
-                                   quickReply: nil)
+                return try FBMessage(sender: json => "sender" => "id",
+                                     recipient: json => "recipient" => "id",
+                                     timestamp: json => "timestamp",
+                                     mid: message => "mid",
+                                     text: message => "text",
+                                     attachments: nil,
+                                     quickReply: nil)
             } else if let delivery = try json =>? KeyPath("delivery", optional: true) {
                 return try Delivery(sender: json => "sender" => "id",
                                     recipient: json => "recipient" => "id",
