@@ -1,11 +1,12 @@
 //
-//  FBRoute.swift
+//  Facebook.swift
 //  SwiftBot
 //
 
 import Foundation
 import PerfectHTTP
 import PerfectCURL
+import Messenger
 
 internal final class Facebook {
     fileprivate let secretToken : String
@@ -27,7 +28,7 @@ extension Facebook: RoutesFactory {
                     let challenge = request.param(name: "hub.challenge"), token == self.secretToken {
                     
                     response.appendBody(string: challenge)
-                    response.status = .ok
+                    response.completed(status: .ok)
                 } else {
                     HerokuLogger.info("Invalid Subscribe Token\n");
                     response.status = .forbidden;
@@ -60,25 +61,29 @@ private func logRequest(_ request: HTTPRequest) {
 
 
 private func parseRequestAndReplyWithEcho(_ request: HTTPRequest) {
+    
     if let postBodyBytes = request.postBodyBytes {
         let postData = Data(bytes: postBodyBytes)
-        if let json = try? JSONSerialization.jsonObject(with: postData, options: []) as? [String: Any] {
-            
-            
-            if let entries = json?["entry"] as? [[String:Any]] {
-                for entry in entries {
-                    if let messaging = entry["messaging"] as? [[String:Any]] {
-                        for message in messaging {
+        do {
+            if let json = try? JSONSerialization.jsonObject(with: postData, options: []) {
+                let fbReq = try Messenger.parse(json: json)
+                fbReq.forEach{ $0.messaging.forEach{ (message) in
+                        switch message.type {
+                            case .message:
+                                // Echo
+                                echoBack(senderId: message.sender)
                             
-                            if let sender = message["sender"] as? [String:String], let senderId = sender["id"] {
-                                
-                                echoBack(senderId: senderId)
-                            }
+                                break
+                            default:
+                                break
                         }
                     }
                 }
             }
+        } catch {
+            HerokuLogger.info("Error on message parsing \(error)")
         }
+        
     }
 }
 
