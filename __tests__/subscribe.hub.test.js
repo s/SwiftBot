@@ -1,3 +1,5 @@
+"use strict"
+
 const request  = require("request");
 const base_url = "http://localhost:8080/webhook"
 
@@ -8,6 +10,7 @@ describe("Facebook HUB Subscribe", () => {
 
       let url = base_url;
       request.get(url, function(error, response, body) {
+          console.log("response", response.statusCode, response.body)
           expect(response.statusCode).toBe(200);
           expect(response.body).toBe("");
           done();
