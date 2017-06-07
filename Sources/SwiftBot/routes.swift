@@ -10,7 +10,10 @@ import Foundation
 import PerfectHTTP
 import PerfectHTTPServer
 import Storage
-import PerfectCURL
+
+internal protocol RoutesFactory {
+    func routes() -> Routes
+}
 
 internal func createHtmlRoute() -> Route {
     return Route(method: .get, uri: "/", handler: { request, response in
@@ -20,22 +23,6 @@ internal func createHtmlRoute() -> Route {
         // Ensure that response.completed() is called when your processing is done.
         response.completed()
     })
-}
-
-internal func createWebhookRoutes() -> Routes {
-    var webhook = Routes(baseUri: "/webhook")
-    let webhookHandler: RequestHandler = { (request, response) in
-        
-        parseRequestAndReplyWithEcho(request);
-        logRequest(request);
-    
-        response.completed(status: .ok)
-    }
-    
-    webhook.add(method: .get,  uri: "", handler: webhookHandler)
-    webhook.add(method: .post, uri: "", handler: webhookHandler)
-
-    return webhook;
 }
 
 internal func createStorageRoutes() -> Routes {
@@ -75,59 +62,12 @@ internal func createStorageRoutes() -> Routes {
     return routes;
 }
 
-
-private func parseRequestAndReplyWithEcho(_ request: HTTPRequest) {
-    if let postBodyBytes = request.postBodyBytes {
-        let postData = Data(bytes: postBodyBytes)
-        if let json = try? JSONSerialization.jsonObject(with: postData, options: []) as? [String: Any] {
-            
-            
-            if let entries = json?["entry"] as? [[String:Any]] {
-                for entry in entries {
-                    if let messaging = entry["messaging"] as? [[String:Any]] {
-                        for message in messaging {
-                            
-                            if let sender = message["sender"] as? [String:String], let senderId = sender["id"] {
-                                
-                                echoBack(senderId: senderId)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-private func echoBack(senderId: String) {
-    let accessToken = Configuration().fbPageAccessToken
-    let messageJson = "{\"recipient\": { \"id\": \"\(senderId)\" }, \"message\": { \"text\": \"hello, world!\"}}"
-    do {
-        let url = "https://graph.facebook.com/v2.6/me/messages?access_token=\(accessToken)"
-        let res = try CURLRequest(url,
-                                  .httpMethod(.post),
-                                  .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
-                                  .postString(messageJson)
-            ).perform().bodyString
-        
-        HerokuLogger.info(res);
-    }
-    catch let error {
-        fatalError("\(error)")
-    }
-}
-
-private func logRequest(_ request: HTTPRequest) {
-    HerokuLogger.info("query: \(request.queryParams)\n")
-    HerokuLogger.info("data: \(request.postParams)\n")
-}
-
-internal func routes() -> Routes {
+internal func routes(_ factories: [RoutesFactory]) -> Routes {
     // Set routes
     var routes = Routes(baseUri: "/")
     
     routes.add(createHtmlRoute())
-    routes.add(createWebhookRoutes())
+    factories.forEach{ routes.add($0.routes()) }
     routes.add(createStorageRoutes())
     
     return routes;

@@ -7,15 +7,6 @@ func providePort() -> Int {
     return Configuration().port
 }
 
-func provideRequestFilters() -> [(HTTPRequestFilter, HTTPFilterPriority)]
-{
-    let token = Configuration().fbSubscribeToken
-    
-    return [
-        (FacebookHUBRequestFilter(token: token), .high)
-    ]
-}
-
 do {
 	// Launch the servers based on the configuration data.
     let server = HTTPServer()
@@ -23,11 +14,14 @@ do {
     server.serverPort = UInt16(providePort())
     server.documentRoot = "./webroot"
     
-    server.setRequestFilters(provideRequestFilters())
-    server.addRoutes(routes())
+    // Init service
+    let token = ProcessInfo.processInfo.environment["FACEBOOK_SUBSCRIBE_TOKEN"] ?? "test-token"
+    let facebook = Facebook(token: token)
+    
+    // Set routes
+    server.addRoutes(routes([facebook]))
     
     // Set filters
-    
     
     // Start
     try server.start()

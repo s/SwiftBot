@@ -1,5 +1,5 @@
 {
-  "name": "SwiftBot Tester",
+  "name": "SwiftBotTester",
   "version": "1.0.0",
   "description": "Request Tests for SwiftBot",
   "main": "index.js",
