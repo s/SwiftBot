@@ -24,7 +24,7 @@ do {
     // Store this in vm for now
     let messenger = Messenger(services: [facebook])
     messenger.updatesHandler.subscribe{ (message) in
-        let replay = ReplayMessage(recipient: message.senderId, text: "Hello, world!")
+        let replay = ReplayMessage(recipient: message.senderId, text: message.text ?? "Hello, world!")
         messenger.send(message: replay)
     }
     // Set routes
