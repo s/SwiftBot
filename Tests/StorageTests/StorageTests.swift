@@ -4,7 +4,7 @@ import XCTest
 class StorageTests : XCTestCase {
     
     func testStorage() {
-        guard let storage = try? Storage() else { return }
+        guard let storage = try? Storage(dsn: "mysql://root@127.0.0.1/swiftbot") else { return }
         XCTAssertNotNil(storage)
         
         XCTAssertNoThrow( try storage.store("foo","bar") )

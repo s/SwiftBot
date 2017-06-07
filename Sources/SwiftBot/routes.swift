@@ -31,7 +31,7 @@ internal func createStorageRoutes() -> Routes {
     let storageFetchHandler: RequestHandler = { (request, response) in
         response.setHeader(.contentType, value: "text/plain")
         do {
-            let storage = try Storage();
+            let storage = try Storage(dsn: Configuration().dbURL);
             let value = try storage.fetch( request.param(name: "key")! )
             response.appendBody(string: "Value: \(String(describing: value))")
             response.completed(status: .ok)
@@ -47,7 +47,7 @@ internal func createStorageRoutes() -> Routes {
         
         response.setHeader(.contentType, value: "text/plain")
         do {
-            let storage = try Storage();
+            let storage = try Storage(dsn: Configuration().dbURL);
             try storage.store( key, value )
             response.appendBody(string: "Stored")
             response.completed(status: .ok)

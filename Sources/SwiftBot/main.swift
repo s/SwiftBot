@@ -4,11 +4,7 @@ import PerfectHTTPServer
 import Foundation
 
 func providePort() -> Int {
-    if let port = ProcessInfo.processInfo.environment["PORT"] {
-        return Int(port)!;
-    }
-    
-    return 8080;
+    return Configuration().port
 }
 
 do {
