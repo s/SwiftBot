@@ -7,9 +7,9 @@ import Foundation
 import PerfectLib
 import PerfectHTTP
 import PerfectCURL
-import Messenger
+import ChatProviders
 
-extension Facebook: RoutesFactory {
+extension FacebookProvider: RoutesFactory {
     internal func routes() -> Routes {
         var routes = Routes(baseUri: "/webhook")
         
@@ -34,21 +34,20 @@ extension Facebook: RoutesFactory {
         }
         
         let webhookHandler: RequestHandler = { [unowned self] (request, response) in
-            
-            if let postBodyBytes = request.postBodyBytes {
-                let postData = Data(bytes: postBodyBytes)
-                do {
-                    if let json = try? JSONSerialization.jsonObject(with: postData, options: []) {
-                        try self.parse(json: json)
-                    }
-                } catch {
-                    Log.info(message: "Error on message parsing \(error)")
-                }
-                
-            }
             logRequest(request)
-            
-            response.completed(status: .ok)
+            guard let postBodyBytes = request.postBodyBytes else {
+                response.completed(status: .noContent)
+                return
+            }
+            let postData = Data(bytes: postBodyBytes)
+            do {
+                let json = try JSONSerialization.jsonObject(with: postData, options: [])
+                try self.parse(json: json)
+                response.completed(status: .ok)
+            } catch {
+                Log.info(message: "Error on message parsing \(error)")
+                response.completed(status: .noContent)
+            }
         }
         
         routes.add(method: .get,  uri: "", handler: webhookChallenge)
