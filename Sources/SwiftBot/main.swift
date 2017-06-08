@@ -8,6 +8,12 @@ func providePort() -> Int {
     return Configuration().port
 }
 
+#if os(Linux)
+    Log.logger = HerokuLogger()
+#else
+    Log.logger = ConsoleLogger()
+#endif
+
 do {
 	// Launch the servers based on the configuration data.
     let server = HTTPServer()
