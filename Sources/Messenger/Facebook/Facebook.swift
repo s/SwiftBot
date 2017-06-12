@@ -35,20 +35,30 @@ public final class Facebook: Service {
     // Send
     
     public func send(message: ReplayMessage) {
-        let messageJson = "{\"recipient\": { \"id\": \"\(message.recipient)\" }, \"message\": { \"text\": \"\(message.text)\"}}"
         do {
+            let json = [
+                "recipient": ["id": message.recipient ],
+                "message": ["text": message.text]
+            ];
+            
+            let data = try JSONSerialization.data(withJSONObject: json)
+            
             let url = "https://graph.facebook.com/v2.6/me/messages?access_token=\(self.accessToken)"
-            let res = try CURLRequest(url,
-                                      .httpMethod(.post),
-                                      .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
-                                      .postString(messageJson)
-                ).perform().bodyString
+            let res = try performPOSTUrlRequest(url, data: data);
+            
             debugPrint("Response \(res)")
-//            HerokuLogger.info(res);
         }
         catch let error {
             fatalError("\(error)")
         }
+    }
+    
+    fileprivate func performPOSTUrlRequest(_ url: String, data: Data) throws -> String {
+        let request = CURLRequest(url,
+                                  .httpMethod(.post),
+                                  .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
+                                  .postData([UInt8](data)))
+        return try request.perform().bodyString
     }
 }
 
