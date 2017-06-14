@@ -1,9 +1,9 @@
 
 import XCTest
 import Foundation
-@testable import Messenger
+@testable import ChatProviders
 
-class mockDelegate: ServiceDelegate {
+class mockDelegate: ProviderDelegate {
     var lastActivity: Activity?
     
     func receive(message: Activity) {
@@ -12,11 +12,11 @@ class mockDelegate: ServiceDelegate {
 }
 
 class FacebookServiceTests : XCTestCase {
-    var facebook: FacebookService!
+    var facebook: FacebookProvider!
     var webhook: MessengerWebhook!
     
     override func setUp() {
-        facebook = FacebookService(secretToken: "secret", accessToken: "access")
+        facebook = FacebookProvider(secretToken: "secret", accessToken: "access")
         webhook = MessengerWebhook()
     }
     

@@ -5,18 +5,17 @@
 
 
 import XCTest
-@testable import Messenger
-import struct Messenger.KeyPath
+@testable import ChatProviders
 
 class KeyPathTests : XCTestCase {
     
     func testKeyPathInit() {
-        let key: Messenger.KeyPath = "key1"
+        let key: KeyPath = "key1"
         XCTAssertEqual(key.path, ["key1"])
     }
     
     func testKeyPathChaine() {
-        let key: Messenger.KeyPath = "key1" => "key2"
+        let key: KeyPath = "key1" => "key2"
         XCTAssertEqual(key.path, ["key1", "key2"])
     }
 }

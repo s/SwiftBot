@@ -4,7 +4,7 @@
 //
 
 import XCTest
-@testable import Messenger
+@testable import ChatProviders
 
 struct TestObj: Mappable {
     let value: String
