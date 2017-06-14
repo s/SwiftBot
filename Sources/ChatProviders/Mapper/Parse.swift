@@ -1,6 +1,6 @@
 //
 //  Parse.swift
-//  SwiftBot
+//  Messanger
 //
 
 import Foundation

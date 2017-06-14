@@ -1,6 +1,6 @@
 //
 //  KeyPath.swift
-//  SwiftBot
+//  Messanger
 //
 
 import Foundation

@@ -1,27 +1,27 @@
 //
 //  Signal.swift
-//  PerfectLib
+//  Messanger
 //
 
 import Foundation
 
 public class Signal<T> {
-    private var _value: T?
-    private var _callbacks: [(T)->Void] = []
+    fileprivate var value: T?
+    fileprivate var callbacks: [(T)->Void] = []
     public var lastValue: T? {
-        return _value
+        return value
     }
     
     public func subscribe(_ callback: @escaping (T)->Void) {
-        _callbacks.append(callback)
-        if let value = _value {
+        callbacks.append(callback)
+        if let value = self.value {
             callback(value)
         }
     }
     
     internal func update(_ newValue: T) {
-        _value = newValue
-        _callbacks.forEach {
+        value = newValue
+        callbacks.forEach {
             $0(newValue)
         }
     }
