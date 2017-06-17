@@ -1,0 +1,18 @@
+os:
+  - osx
+language: swift
+osx_image: xcode8.3
+
+services: 
+  - mysql
+
+before_install:
+  - brew update
+  - brew install mysql
+  # - mysql -e 'CREATE DATABASE IF NOT EXISTS swiftbot;'
+
+install:
+  - swift package --enable-prefetching fetch
+
+script:
+  - make test
