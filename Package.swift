@@ -10,6 +10,9 @@ let package = Package(
             name:"Storage",
             dependencies:[]),
         Target(
+            name: "EchoBot",
+            dependencies:[]),
+        Target(
             name:"SwiftBot",
             dependencies:["ChatProviders","Storage"])
     ],  
