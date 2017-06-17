@@ -3,14 +3,14 @@
 
 # Few shortcuts for swift package manager
 
-test:
-	xcodebuild -project SwiftBot.xcodeproj -scheme SwiftBot build test
-
 install:
 	Scripts/install.py Sources/SwiftBot/config.swift
 
 generate:
 	swift package generate-xcodeproj
+
+test:
+	swift test
 
 build:
 	swift build

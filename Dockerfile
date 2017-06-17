@@ -8,7 +8,7 @@ COPY . ./
 
 RUN swift package --enable-prefetching fetch
 RUN swift package clean
-# CMD swift test --parallel
+CMD swift test --parallel
 RUN swift build --configuration release
 
 EXPOSE 8080

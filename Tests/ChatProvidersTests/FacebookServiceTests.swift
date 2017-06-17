@@ -11,6 +11,19 @@ class mockDelegate: ProviderDelegate {
     }
 }
 
+#if os(Linux)
+extension FacebookServiceTests {
+    static var allTests : [(String, FacebookServiceTests -> () throws -> Void)] {
+        return [
+            ("testMessage", testMessage),
+            ("testDelivery", testDelivery),
+            ("testRead", testRead),
+            ("testActivityParsing", testActivityParsing)
+        ]
+    }
+}
+#endif
+
 class FacebookServiceTests : XCTestCase {
     var facebook: FacebookProvider!
     var webhook: MessengerWebhook!
