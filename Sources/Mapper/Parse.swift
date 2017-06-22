@@ -91,25 +91,25 @@ precedencegroup TraversPrecedence {
 infix operator =>  : TraversPrecedence
 infix operator =>? : TraversPrecedence
 
-func => (lhs: JSON, rhs: KeyPath) throws -> Any {
+public func => (lhs: JSON, rhs: KeyPath) throws -> Any {
     return try parse(lhs, key: rhs, parser: {$0})
 }
 
-func => <T:Mappable>(lhs: JSON, rhs: KeyPath) throws -> T {
+public func => <T:Mappable>(lhs: JSON, rhs: KeyPath) throws -> T {
     return try parse(lhs, key: rhs, parser: {try T.mapped(json: $0)})
 }
 
-func =>? (lhs: JSON, rhs: KeyPath) throws -> Any? {
+public func =>? (lhs: JSON, rhs: KeyPath) throws -> Any? {
     return try parseOptional(lhs, key: rhs, parser: Optional.mapper({$0}))
 }
 
-func => (lhs: JSON, rhs: KeyPath) throws -> [Any] {
+public func => (lhs: JSON, rhs: KeyPath) throws -> [Any] {
     return try parse(lhs, key: rhs, parser: {
         $0 as! [Any]
     })
 }
 
-func => <T:Mappable>(lhs: JSON, rhs: KeyPath) throws -> [T] {
+public func => <T:Mappable>(lhs: JSON, rhs: KeyPath) throws -> [T] {
     return try parse(lhs, key: rhs, parser: {
         try Array.mapped($0)
     })

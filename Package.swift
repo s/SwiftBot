@@ -4,11 +4,20 @@ let package = Package(
 	name: "SwiftBot",  
 	targets: [
         Target(
-            name:"ChatProviders",
+            name:"Mapper",
             dependencies:[]),
+        Target(
+            name:"BotsKit",
+            dependencies:["Mapper"]),
+        Target(
+            name:"ChatProviders",
+            dependencies:["Mapper", "BotsKit"]),
         Target(
             name:"Storage",
             dependencies:[]),
+        Target(
+            name: "EchoBot",
+            dependencies:["BotsKit"]),
         Target(
             name:"SwiftBot",
             dependencies:["ChatProviders","Storage"])

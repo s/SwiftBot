@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import Mapper
 
 public final class MessengerWebhook {
     internal struct Request {

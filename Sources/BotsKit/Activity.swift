@@ -46,6 +46,11 @@ public struct Activity {
 public struct Account {
     public let id: String
     public let name: String
+    
+    public init(id: String, name: String) {
+        self.id = id
+        self.name = name
+    }
 }
 
 public typealias ConversationService = String
@@ -58,4 +63,11 @@ public struct Conversation {
     
     public let activityId: ConversationService
 //    public let serviceUrl: URL
+    
+    public init(members: [Account], status: String, channelId: String, activityId: ConversationService) {
+        self.members = members
+        self.status = status
+        self.channelId = channelId
+        self.activityId = activityId
+    }
 }

@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import BotsKit
 import ChatProviders
 
 /// Main object that connect components for chat bot application.

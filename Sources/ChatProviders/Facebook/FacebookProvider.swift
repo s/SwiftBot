@@ -4,6 +4,8 @@
 //
 
 import Foundation
+import BotsKit
+import Mapper
 import PerfectCURL
 
 public final class FacebookProvider: Provider {

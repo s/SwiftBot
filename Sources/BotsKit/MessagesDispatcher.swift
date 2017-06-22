@@ -30,7 +30,7 @@ extension MessagesDispatcher: ProviderDelegate {
     }
 }
 
-enum DispatcherError: Error {
+public enum DispatcherError: Error {
     case cantParseJSON(Any)
     
     public var debugDescription: String {

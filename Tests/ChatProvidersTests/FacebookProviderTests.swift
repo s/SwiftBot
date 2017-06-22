@@ -1,7 +1,9 @@
 
 import XCTest
 import Foundation
+import BotsKit
 @testable import ChatProviders
+
 
 class mockDelegate: ProviderDelegate {
     var lastActivity: Activity?
@@ -12,7 +14,7 @@ class mockDelegate: ProviderDelegate {
 }
 
 #if os(Linux)
-extension FacebookServiceTests {
+extension FacebookProviderTests {
     static var allTests : [(String, FacebookServiceTests -> () throws -> Void)] {
         return [
             ("testMessage", testMessage),
@@ -24,7 +26,7 @@ extension FacebookServiceTests {
 }
 #endif
 
-class FacebookServiceTests : XCTestCase {
+class FacebookProviderTests : XCTestCase {
     var facebook: FacebookProvider!
     var webhook: MessengerWebhook!
     

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Mapper
 
 public protocol Provider: class {
     weak var delegate: ProviderDelegate? { get set }

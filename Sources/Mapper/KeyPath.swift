@@ -53,6 +53,6 @@ public struct KeyPath: ExpressibleByStringLiteral, ExpressibleByArrayLiteral, Cu
     }
 }
 
-func => (lhs: KeyPath, rhs: KeyPath) -> KeyPath {
+public func => (lhs: KeyPath, rhs: KeyPath) -> KeyPath {
     return KeyPath(lhs.path + rhs.path)
 }
