@@ -23,7 +23,7 @@ public final class FacebookProvider: Provider {
         
     public func parse(data: Data) throws {
         guard let json = try? JSONSerialization.jsonObject(with: data, options: []) else {
-            throw DispatcherError.cantParseJSON(data)
+            throw ProviderError.cantParseJSON(data)
         }
         try parse(json: json)
     }

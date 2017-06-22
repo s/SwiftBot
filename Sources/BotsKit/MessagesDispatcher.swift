@@ -5,40 +5,57 @@
 
 import Foundation
 
+/*
+     ---------------------
+     |      Provider     |
+     ---------------------
+        ||             ^
+        || Activity    | Message to chat provider
+        \/             |
+     ---------------------
+     |     Dispatcher    |
+     ---------------------
+        ||             /\
+        || Activity    || Replay
+        \/             ||
+     ----------------  ||
+     |   Bot Impl   |===/
+     ----------------
+     |   Storage    |
+     ----------------
+ */
+
+/// Dispatcher connect bots and providers
 public class MessagesDispatcher {
-    let serviceProviders: [Provider]
-    public let updatesHandler: Signal<Activity> = Signal()
     
-    public init(services: [Provider]) {
-        self.serviceProviders = services
-        self.register(services: self.serviceProviders)
+    /// Map of all chanels
+    let serviceProviders: [Provider]
+    
+    /// Map of bots
+    let bots: [Bot]
+    
+    public init(providers: [Provider], bots: [Bot]) {
+        self.serviceProviders = providers
+        self.bots = bots
+        self.register(providers: self.serviceProviders, bots: self.bots)
     }
     
-    public func send(activity: Activity) {
-        debugPrint("Send message with service")
-        serviceProviders.forEach{ $0.send(activity: activity) }
+    internal func register(providers: [Provider], bots: [Bot]) {
+        providers.forEach{ $0.delegate = self }
+        bots.forEach{ $0.delegate = self }
     }
 }
 
 extension MessagesDispatcher: ProviderDelegate {
-    internal func register(services: [Provider]) {
-        services.forEach{ $0.delegate = self }
-    }
-    
     public func receive(message: Activity) {
-        self.updatesHandler.update(message)
+        self.bots.forEach{ $0.dispatch(activity: message) }
     }
 }
 
-public enum DispatcherError: Error {
-    case cantParseJSON(Any)
-    
-    public var debugDescription: String {
-        switch self {
-        case let .cantParseJSON(json):
-            return "Can't parse json \(json)"
-            
-        }
+extension MessagesDispatcher: BotDelegate {
+    public func send(activity: Activity) {
+        debugPrint("Send message with service")
+        serviceProviders.forEach{ $0.send(activity: activity) }
     }
 }
 

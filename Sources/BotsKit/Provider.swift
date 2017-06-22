@@ -20,3 +20,16 @@ public protocol Provider: class {
 public protocol ProviderDelegate: class {
     func receive(message: Activity)
 }
+
+public enum ProviderError: Error {
+    case cantParseJSON(Any)
+    
+    public var debugDescription: String {
+        switch self {
+        case let .cantParseJSON(json):
+            return "Can't parse json \(json)"
+            
+        }
+    }
+}
+
