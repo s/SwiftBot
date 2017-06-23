@@ -5,7 +5,7 @@
 
 import Foundation
 
-class CoffeeManager : NSObject {
+class CoffeeManager {
     open let persons : [Person]
     
     init(with persons: [Person]) {
