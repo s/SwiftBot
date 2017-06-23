@@ -20,7 +20,38 @@ public final class FacebookProvider: Provider {
         self.secretToken = secretToken;
         self.accessToken = accessToken
     }
+    
+    // Send
+    public func send(activity: Activity) {
         
+        do {
+            let json = [
+                "recipient": ["id": activity.recipient.id ],
+                "message": ["text": activity.text]
+            ];
+            
+            let data = try JSONSerialization.data(withJSONObject: json)
+            
+            let url = "https://graph.facebook.com/v2.6/me/messages?access_token=\(self.accessToken)"
+            let res = try performPOSTUrlRequest(url, data: data);
+            
+            debugPrint("Response \(res)")
+        }
+        catch let error {
+            fatalError("\(error)")
+        }
+    }
+    
+    fileprivate func performPOSTUrlRequest(_ url: String, data: Data) throws -> String {
+        let request = CURLRequest(url,
+                                  .httpMethod(.post),
+                                  .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
+                                  .postData([UInt8](data)))
+        return try request.perform().bodyString
+    }
+}
+
+extension FacebookProvider: Parser {
     public func parse(data: Data) throws {
         guard let json = try? JSONSerialization.jsonObject(with: data, options: []) else {
             throw ProviderError.cantParseJSON(data)
@@ -58,35 +89,5 @@ public final class FacebookProvider: Provider {
             }
         }
     }
-        
-    // Send
-    public func send(activity: Activity) {
-        
-        do {
-            let json = [
-                "recipient": ["id": activity.recipient.id ],
-                "message": ["text": activity.text]
-            ];
-            
-            let data = try JSONSerialization.data(withJSONObject: json)
-            
-            let url = "https://graph.facebook.com/v2.6/me/messages?access_token=\(self.accessToken)"
-            let res = try performPOSTUrlRequest(url, data: data);
-            
-            debugPrint("Response \(res)")
-        }
-        catch let error {
-            fatalError("\(error)")
-        }
-    }
-    
-    fileprivate func performPOSTUrlRequest(_ url: String, data: Data) throws -> String {
-        let request = CURLRequest(url,
-                                  .httpMethod(.post),
-                                  .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
-                                  .postData([UInt8](data)))
-        return try request.perform().bodyString
-    }
 }
-
 

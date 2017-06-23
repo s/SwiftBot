@@ -8,7 +8,7 @@ let package = Package(
             dependencies:[]),
         Target(
             name:"BotsKit",
-            dependencies:["Mapper"]),
+            dependencies:[]),
         Target(
             name:"ChatProviders",
             dependencies:["Mapper", "BotsKit"]),

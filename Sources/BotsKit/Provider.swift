@@ -7,15 +7,11 @@
 //
 
 import Foundation
-import Mapper
 
 /// Chat provider receives and parses messages from chat.
 /// And also can send messages back
 public protocol Provider: class {
     weak var delegate: ProviderDelegate? { get set }
-    func parse(data: Data) throws
-    func parse(json: JSON) throws
-    
     func send(activity: Activity)
 }
 
