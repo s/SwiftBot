@@ -55,11 +55,11 @@ public final class Entry {
 
 public final class Message {
     public let mid: String
-    public let text: String
+    public let text: String?
     public let attachments: [Attachment]?
     public let quickReply: QuickReply?
     
-    internal init(mid: String, text: String, attachments: [Attachment]?, quickReply: QuickReply?) {
+    internal init(mid: String, text: String?, attachments: [Attachment]?, quickReply: QuickReply?) {
         self.mid = mid
         self.text = text
         self.attachments = attachments
@@ -144,11 +144,11 @@ extension Entry.Item: Mappable {
             let metadata = try Entry.Details(sender: json => "sender" => "id",
                                              recipient: json => "recipient" => "id",
                                              timestamp: json => "timestamp")
-            if let message: Any = try json =>? KeyPath("message", optional: true) {
+            if let message = try json =>? KeyPath("message", optional: true) {
                 return .message(metadata,
                                 message: try Message(mid: message => "mid",
-                                                     text: message => "text",
-                                                     attachments: nil,
+                                                     text: message =>? KeyPath("text", optional: true),
+                                                     attachments: message =>? KeyPath("attachments", optional: true),
                                                      quickReply: nil))
             } else if let delivery = try json =>? KeyPath("delivery", optional: true) {
                 return .delivery(metadata,
@@ -161,7 +161,7 @@ extension Entry.Item: Mappable {
                                             seq: read => "seq"))
             }
         } catch {
-            return .undefined
+            throw error
         }
         return .undefined
     }
@@ -170,8 +170,23 @@ extension Entry.Item: Mappable {
 extension Attachment: Mappable {
     public static func mapped(json: JSON) throws -> Attachment {
         return try Attachment(type: Type(rawValue: json => "type")!,
-                              multimediaPayload: nil,
+                              multimediaPayload: json =>? KeyPath("payload", optional: true),
                               locationPayload: nil)
     }
-    
+}
+
+extension Attachment.MultimediaPayload: Mappable {
+    public static func mapped(json: JSON) throws -> Attachment.MultimediaPayload {
+        return try Attachment.MultimediaPayload(url: json =>? KeyPath("url", optional: true))
+    }
+}
+
+extension Attachment.LocationPayload: Mappable {
+    public static func mapped(json: JSON) throws -> Attachment.LocationPayload {
+        let coordinatesKeyPath = KeyPath("coordinates", optional: true)
+        guard let coordinates = try json =>? coordinatesKeyPath else {
+            throw ParseError.missedKey(key: coordinatesKeyPath, of: json)
+        }
+        return try Attachment.LocationPayload(lat: coordinates => "lat", long: coordinates => "long")
+    }
 }

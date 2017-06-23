@@ -79,7 +79,7 @@ extension FacebookProvider: Parser {
                                                 recipient: recipient,
                                                 timestamp: metadata.timestamp,
                                                 localTimestamp: metadata.timestamp,
-                                                text: message.text)
+                                                text: message.text ?? "")
                         delegate.receive(message: activity)
                         break
                     default:

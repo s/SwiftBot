@@ -5,7 +5,7 @@
 
 import Foundation
 
-enum ParseError: Error {
+public enum ParseError: Error {
     case missedKey(key: KeyPath, of: Any)
     case typeMismatch(expected: Any.Type, of: Any)
     
@@ -72,7 +72,7 @@ internal func parse<T>(_ json: JSON, key: KeyPath, parser: ((Any) throws -> T)) 
     return try parser(parse(json, key: key))
 }
 
-internal func parseOptional<T>(_ json: JSON, key: KeyPath, parser: ((Any) throws -> T)) throws -> T? {
+internal func parseOptional<T>(_ json: JSON, key: KeyPath, parser: ((Any) throws -> T?)) throws -> T? {
     guard let object = try parseOptional(json, key: key) else {
         return nil
     }
@@ -103,6 +103,11 @@ public func =>? (lhs: JSON, rhs: KeyPath) throws -> Any? {
     return try parseOptional(lhs, key: rhs, parser: Optional.mapper({$0}))
 }
 
+public func =>? <T:Mappable>(lhs: JSON, rhs: KeyPath) throws -> T? {
+    return try parseOptional(lhs, key: rhs, parser: Optional.mapper({try T.mapped(json: $0)}))
+}
+
+// More
 public func => (lhs: JSON, rhs: KeyPath) throws -> [Any] {
     return try parse(lhs, key: rhs, parser: {
         $0 as! [Any]
@@ -113,6 +118,10 @@ public func => <T:Mappable>(lhs: JSON, rhs: KeyPath) throws -> [T] {
     return try parse(lhs, key: rhs, parser: {
         try Array.mapped($0)
     })
+}
+
+public func =>? <T:Mappable>(lhs: JSON, rhs: KeyPath) throws -> [T]? {
+    return try parseOptional(lhs, key: rhs, parser: Optional.mapper({try Array.mapped($0)}))
 }
 
 // MARK: Mapper helpers

@@ -1,3 +1,7 @@
+//
+//  FacebookProviderTests.swift
+//  ChatProviders
+//
 
 import XCTest
 import Foundation
@@ -166,5 +170,61 @@ class FacebookProviderTests : XCTestCase {
             XCTFail("Failed to parse JSON \(error)")
         }
     }
+    
+    func testAttachments() {
+        let input = ["object":"page",
+                     "entry": [
+                        [
+                            "id": "223368791496726",
+                            "time": 1497537501665,
+                            "messaging": [
+                                [
+                                    "sender": [
+                                        "id": "1212086162234423"
+                                    ],
+                                    "recipient":[
+                                        "id": "223368791496726"
+                                    ],
+                                    "timestamp": 1497537501264,
+                                    "message": [
+                                        "mid": "mid.$cAADLJzyxrohi3XYgUFcrDDV6Ze4Y",
+                                        "seq": 15180,
+                                        "attachments": [
+                                            [
+                                                "type": "image",
+                                                "payload": [
+                                                    "url": "https://scontent.xx.fbcdn.net/v/t34.0-12/17690680_1741708379474843_664560316_n.gif?fallback"
+                                                ]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+            ]] as [String: Any]
+        do {
+            let request = try webhook.parse(callback: input)
+            let m = request.entry.last!.messaging.last
+            XCTAssertNotNil(m)
+            
+            if case let Entry.Item.message(_, message: msg) = m! {
+                XCTAssertNil(msg.text)
+                XCTAssertNotNil(msg.attachments)
+                
+                guard let attachment = msg.attachments?.last else {
+                    XCTFail("Did not prased attachment right")
+                    return
+                }
+                XCTAssertEqual(attachment.type, .image)
+                XCTAssertEqual(attachment.multimediaPayload?.url, "https://scontent.xx.fbcdn.net/v/t34.0-12/17690680_1741708379474843_664560316_n.gif?fallback")
+            } else {
+                XCTFail("Parsed item is not a message")
+            }
+        } catch {
+            XCTFail("Failed to parse JSON \(error)")
+        }
+        //            {\"object\":\"page\",\"entry\":[{\"id\":\"223368791496726\",\"time\":1497537501665,\"messaging\":[{\"sender\":{\"id\":\"1212086162234423\"},\"recipient\":{\"id\":\"223368791496726\"},\"timestamp\":1497537501264,\"message\":{\"mid\":\"mid.$cAADLJzyxrohi3XYgUFcrDDV6Ze4Y\",\"seq\":15180,\"attachments\":[{\"type\":\"image\",\"payload\":{\"url\":\"https:\\/\\/scontent.xx.fbcdn.net\\/v\\/t34.0-12\\/17690680_1741708379474843_664560316_n.gif?fallback", "1"), ("_nc_ad", "z-m"), ("oh", "cd8368e49dbad1eb9f6b4d661b736bf9"), ("oe", "5944B972\"}}]}}]}]}
+    }
+    
     
 }
