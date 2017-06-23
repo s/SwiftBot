@@ -1,17 +1,20 @@
 //
-//  MessagesDispatcher.swift
-//  BotsKit
+//  ConnectorDispatcherTests.swift
+//  BotsKitTests
 //
 
 import XCTest
-import Mapper
 @testable import BotsKit
 
 final class TestProvider: Provider {
-    weak var delegate: ProviderDelegate?
+    let update: Signal<Activity>
+    
+    init() {
+        update = Signal()
+    }
     
     func receive(activity: Activity) {
-        self.delegate?.receive(message: activity)
+        update.update(activity)
     }
     
     func send(activity: Activity) {
@@ -20,8 +23,12 @@ final class TestProvider: Provider {
 }
 
 final class TestBot: Bot {
-    weak var delegate: BotDelegate?
+    public let sendActivity: Signal<Activity>
     var lastActivity: Activity?
+    
+    init() {
+        sendActivity = Signal()
+    }
     
     @discardableResult
     func dispatch(activity: Activity) -> DispatchResult {
@@ -30,13 +37,16 @@ final class TestBot: Bot {
     }
 }
 
-class MessagesDispatcherTests : XCTestCase {
-    var dispatcher: MessagesDispatcher?
+class ConnectorDispatcherTests: XCTestCase {
+    
+    var dispatcher: ConnectorDispatcher?
     
     func testActivityDispatch() {
         let provider = TestProvider()
         let bot = TestBot()
-        dispatcher = MessagesDispatcher(providers: [provider], bots: [bot])
+        
+        dispatcher = ConnectorDispatcher()
+        dispatcher?.register(bot: bot, in: provider)
         
         let from = Account(id: "from_id", name: "from")
         let to = Account(id: "to_id", name: "to")
@@ -56,5 +66,5 @@ class MessagesDispatcherTests : XCTestCase {
         
         XCTAssertEqual(bot.lastActivity?.text, "Hello, World!")
     }
+    
 }
-

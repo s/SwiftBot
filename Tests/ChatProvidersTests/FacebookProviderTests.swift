@@ -8,15 +8,6 @@ import Foundation
 import BotsKit
 @testable import ChatProviders
 
-
-class mockDelegate: ProviderDelegate {
-    var lastActivity: Activity?
-    
-    func receive(message: Activity) {
-        self.lastActivity = message
-    }
-}
-
 #if os(Linux)
 extension FacebookProviderTests {
     static var allTests : [(String, FacebookServiceTests -> () throws -> Void)] {
@@ -158,11 +149,9 @@ class FacebookProviderTests : XCTestCase {
             ] as [String : Any]
         
         do {
-            let delegate = mockDelegate()
-            facebook.delegate = delegate
             try facebook.parse(json: input)
-            XCTAssertNotNil(delegate.lastActivity)
-            let activity = delegate.lastActivity!
+            XCTAssertNotNil(facebook.update.lastValue)
+            let activity = facebook.update.lastValue!
             XCTAssertEqual(activity.text, "does this work?")
             XCTAssertEqual(activity.conversation.channelId, "260317677677806")
             XCTAssertEqual(activity.conversation.activityId, "facebook")

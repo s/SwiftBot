@@ -8,6 +8,9 @@ import Foundation
 public class Signal<T> {
     fileprivate var value: T?
     fileprivate var callbacks: [(T)->Void] = []
+    
+    public init() {}
+    
     public var lastValue: T? {
         return value
     }
@@ -19,7 +22,7 @@ public class Signal<T> {
         }
     }
     
-    internal func update(_ newValue: T) {
+    public func update(_ newValue: T) {
         value = newValue
         callbacks.forEach {
             $0(newValue)

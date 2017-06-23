@@ -14,11 +14,12 @@ public final class FacebookProvider: Provider {
     
     internal let webhook: MessengerWebhook = MessengerWebhook()
     // Good candidate to remove
-    public weak var delegate: ProviderDelegate?
+    public let update: Signal<Activity>
     
     public init(secretToken: String, accessToken: String) {
         self.secretToken = secretToken;
         self.accessToken = accessToken
+        update = Signal()
     }
     
     // Send
@@ -60,31 +61,29 @@ extension FacebookProvider: Parser {
     }
     
     public func parse(json: JSON) throws {
-        if let delegate = self.delegate {
-            let request = try webhook.parse(callback: json)
-            request.entry.forEach{
-                let conversation = Conversation(members: [], //?
-                    status: "page",
-                    channelId: $0.id,
-                    activityId: "facebook")
-                $0.messaging.forEach{ (o) in
-                    switch (o) {
-                    case .message(let metadata, let message):
-                        let from = Account(id: metadata.sender, name: "")
-                        let recipient = Account(id: metadata.recipient, name: "")
-                        let activity = Activity(type: .message,
-                                                id: message.mid,
-                                                conversation: conversation,
-                                                from: from,
-                                                recipient: recipient,
-                                                timestamp: metadata.timestamp,
-                                                localTimestamp: metadata.timestamp,
-                                                text: message.text ?? "")
-                        delegate.receive(message: activity)
-                        break
-                    default:
-                        break
-                    }
+        let request = try webhook.parse(callback: json)
+        request.entry.forEach{
+            let conversation = Conversation(members: [], //?
+                status: "page",
+                channelId: $0.id,
+                activityId: "facebook")
+            $0.messaging.forEach{ (o) in
+                switch (o) {
+                case .message(let metadata, let message):
+                    let from = Account(id: metadata.sender, name: "")
+                    let recipient = Account(id: metadata.recipient, name: "")
+                    let activity = Activity(type: .message,
+                                            id: message.mid,
+                                            conversation: conversation,
+                                            from: from,
+                                            recipient: recipient,
+                                            timestamp: metadata.timestamp,
+                                            localTimestamp: metadata.timestamp,
+                                            text: message.text ?? "")
+                    update.update(activity)
+                    break
+                default:
+                    break
                 }
             }
         }

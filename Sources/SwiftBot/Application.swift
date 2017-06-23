@@ -12,7 +12,7 @@ import EchoBot
 /// This class init and store chat providers, dispatcher and
 /// bots handlers
 internal final class Application {
-    let dispatcher: MessagesDispatcher
+    let dispatcher: ConnectorDispatcher
     internal let routes: [RoutesFactory]
     
     init(configuration: Configuration) {
@@ -24,7 +24,8 @@ internal final class Application {
         let echoBot = EchoBot()
         
         // Chat messages dispatcher connect messages from providers to bots
-        dispatcher = MessagesDispatcher(providers: [facebook], bots: [echoBot])
+        dispatcher = ConnectorDispatcher()
+        dispatcher.register(bot: echoBot, in: facebook)
         
         // Init other services
         let storage = StorageRoutes(dsn: configuration.dbURL)

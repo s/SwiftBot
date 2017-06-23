@@ -8,20 +8,10 @@ import XCTest
 import BotsKit
 @testable import EchoBot
 
-final class TestBotDelegate: BotDelegate {
-    var lastActivity: Activity?
-    
-    func send(activity: Activity) {
-        lastActivity = activity
-    }
-}
-
 class EchoBotTests : XCTestCase {
     
     func testEchoMessage() {
         let bot = EchoBot()
-        let delegate = TestBotDelegate()
-        bot.delegate = delegate
         
         let from = Account(id: "from_id", name: "from")
         let to = Account(id: "to_id", name: "to")
@@ -39,9 +29,9 @@ class EchoBotTests : XCTestCase {
                                 text: "text")
         let _ = bot.dispatch(activity: activity)
         
-        XCTAssertNotNil(delegate.lastActivity)
-        XCTAssertEqual(delegate.lastActivity?.text, "text")
-        XCTAssertEqual(delegate.lastActivity?.from.id, "to_id")
-        XCTAssertEqual(delegate.lastActivity?.recipient.id, "from_id")
+        XCTAssertNotNil(bot.sendActivity.lastValue)
+        XCTAssertEqual(bot.sendActivity.lastValue?.text, "text")
+        XCTAssertEqual(bot.sendActivity.lastValue?.from.id, "to_id")
+        XCTAssertEqual(bot.sendActivity.lastValue?.recipient.id, "from_id")
     }
 }

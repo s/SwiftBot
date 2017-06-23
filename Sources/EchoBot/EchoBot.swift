@@ -3,13 +3,16 @@
 //  EchoBot
 //
 
-import BotsKit
 import Foundation
+import BotsKit
 
 public final class EchoBot: Bot {
-    public var delegate: BotDelegate?
+   
+    public let sendActivity: Signal<Activity>
     
-    public init() { }
+    public init() {
+        sendActivity = Signal()
+    }
     
     public func dispatch(activity: Activity) -> DispatchResult {
         if activity.type == .message {
@@ -21,9 +24,7 @@ public final class EchoBot: Bot {
                                   timestamp: Date(),
                                   localTimestamp: Date(),
                                   text: activity.text)
-            if let delegate = self.delegate {
-                delegate.send(activity: replay)
-            }
+            sendActivity.update(replay)
         }
         return .ok
     }
