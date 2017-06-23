@@ -5,11 +5,8 @@
 
 import Foundation
 
-public enum DispatchResult {
-    case ok
-    case error(Error)
-}
-
+/// Bot is process that can process activity
+/// and send answer to user
 public protocol Bot: class {
     weak var delegate: BotDelegate? { get set }
     
@@ -19,4 +16,9 @@ public protocol Bot: class {
 
 public protocol BotDelegate: class {
     func send(activity: Activity)
+}
+
+public enum DispatchResult {
+    case ok
+    case error(Error)
 }
