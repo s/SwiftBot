@@ -1,6 +1,6 @@
 //
 //  Signal.swift
-//  Messanger
+//  BotsKit
 //
 
 import Foundation
