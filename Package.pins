@@ -8,6 +8,12 @@
       "version": "2.0.4"
     },
     {
+      "package": "Health",
+      "reason": null,
+      "repositoryURL": "https://github.com/IBM-Swift/Health.git",
+      "version": "0.0.1"
+    },
+    {
       "package": "HeliumLogger",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/HeliumLogger",
