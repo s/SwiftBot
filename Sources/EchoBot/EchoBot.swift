@@ -16,15 +16,7 @@ public final class EchoBot: Bot {
     
     public func dispatch(activity: Activity) -> DispatchResult {
         if activity.type == .message {
-            let replay = Activity(type: .message,
-                                  id: "",
-                                  conversation: activity.conversation,
-                                  from: activity.recipient,
-                                  recipient: activity.from,
-                                  timestamp: Date(),
-                                  localTimestamp: Date(),
-                                  text: activity.text)
-            sendActivity.update(replay)
+            sendActivity.update(activity.replay(text: activity.text))
         }
         return .ok
     }

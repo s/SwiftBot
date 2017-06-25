@@ -53,6 +53,12 @@ public struct Account {
     }
 }
 
+extension Account: Equatable {
+    public static func ==(lhs: Account, rhs: Account) -> Bool {
+        return lhs.id == rhs.id
+    }
+}
+
 public typealias ConversationService = String
 
 /// Conversation type describe any chat between bot and user or multi user chat
@@ -69,5 +75,12 @@ public struct Conversation {
         self.status = status
         self.channelId = channelId
         self.activityId = activityId
+    }
+}
+
+extension Conversation: Equatable {
+    public static func ==(lhs: Conversation, rhs: Conversation) -> Bool {
+        return lhs.channelId == rhs.channelId
+            && lhs.activityId == lhs.activityId
     }
 }

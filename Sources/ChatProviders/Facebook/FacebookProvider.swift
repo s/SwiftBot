@@ -69,16 +69,16 @@ extension FacebookProvider: Parser {
                 activityId: "facebook")
             $0.messaging.forEach{ (o) in
                 switch (o) {
-                case .message(let metadata, let message):
-                    let from = Account(id: metadata.sender, name: "")
-                    let recipient = Account(id: metadata.recipient, name: "")
+                case .message(let details, let message):
+                    let from = Account(id: details.sender, name: "")
+                    let recipient = Account(id: details.recipient, name: "")
                     let activity = Activity(type: .message,
                                             id: message.mid,
                                             conversation: conversation,
                                             from: from,
                                             recipient: recipient,
-                                            timestamp: metadata.timestamp,
-                                            localTimestamp: metadata.timestamp,
+                                            timestamp: details.timestamp,
+                                            localTimestamp: details.timestamp,
                                             text: message.text ?? "")
                     update.update(activity)
                     break
