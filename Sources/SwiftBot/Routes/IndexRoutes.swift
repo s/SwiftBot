@@ -4,12 +4,14 @@
 //
 
 import PerfectHTTP
+import LoggerAPI
 
 internal final class IndexRoutes: RoutesFactory {
     func routes() -> Routes {
         var index = Routes(baseUri: "/")
         
         index.add(method: .get, uri: "/", handler: { request, response in
+            Log.info("Log from index page ")
             // Respond with a simple message.
             response.setHeader(.contentType, value: "text/html")
             response.appendBody(string: "<html><title>SwiftBot</title><body>Hello, devs! <br/> Time to run some swift bots!</body></html>")

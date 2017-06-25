@@ -1,51 +1,71 @@
 //
 //  HeliumLogger+Application.swift
-//  PerfectLib
-//
-//  Created by mainuser on 6/25/17.
+//  SwiftBot
 //
 
 import Foundation
 import HeliumLogger
 import LoggerAPI
 import protocol PerfectLib.Logger
+#if os(Linux)
+    import Glibc
+#else
+    import Darwin
+#endif
+
 
 extension HeliumLogger {
-    public final class PerfectLoggerBridge: PerfectLib.Logger {
+    fileprivate final class PerfectLoggerBridge: PerfectLib.Logger {
+        let logger: HeliumLogger
+        
+        init(logger: HeliumLogger) {
+            self.logger = logger
+        }
+        
         public func debug(message: String) {
-            Log.debug(message)
+            logger.log(.debug, msg: message, functionName: "", lineNum: 0, fileName: "Perfect")
         }
         
         public func info(message: String) {
-            Log.info(message)
+            logger.log(.info, msg: message, functionName: "", lineNum: 0, fileName: "Perfect")
         }
         
         public func warning(message: String) {
-            Log.warning(message)
+            logger.log(.warning, msg: message, functionName: "", lineNum: 0, fileName: "Perfect")
         }
         
         public func error(message: String) {
-            Log.error(message)
+            logger.log(.error, msg: message, functionName: "", lineNum: 0, fileName: "Perfect")
         }
         
         public func critical(message: String) {
-            Log.error(message)
+            logger.log(.error, msg: message, functionName: "", lineNum: 0, fileName: "Perfect")
         }
         
         public func terminal(message: String) {
-            Log.error(message)
+            logger.log(.error, msg: message, functionName: "", lineNum: 0, fileName: "Perfect")
         }
     }
     
-    @discardableResult
-    class func applicationLogger() -> HeliumLogger {
-        let log = HeliumLogger(.verbose)
-        Log.logger = log
-        
-        return log
+    fileprivate final class HerokuOutputStream: TextOutputStream {
+        func write(_ string: String) {
+            fputs(string, stdout)
+            fputs("\n", stdout)
+            fflush(stdout)
+        }
     }
     
-    internal func perfectLogger() -> PerfectLib.Logger {
-        return PerfectLoggerBridge()
+    class func applicationLogger(type: LoggerAPI.LoggerMessageType = .verbose) -> HeliumLogger {
+        #if os(Linux)
+            let logger = HeliumStreamLogger(type, outputStream:HerokuOutputStream())
+        #else
+            let logger = HeliumLogger(type)
+        #endif
+        Log.logger = logger
+        return logger
+    }
+    
+    func perfectLogger() -> PerfectLib.Logger {
+        return PerfectLoggerBridge(logger: self)
     }
 }
