@@ -19,7 +19,7 @@ extension FacebookProvider: RoutesFactory {
     
     private func webhookChallenge(request: HTTPRequest, response: HTTPResponse) {
         if let mode = request.param(name: "hub.mode"), mode == "subscribe" {
-            Log.info("Subscribe Mode")
+            Log.info("Starting subscribe mode challenge")
             
             if let token = request.param(name: "hub.verify_token"),
                 let challenge = request.param(name: "hub.challenge"),
@@ -27,8 +27,9 @@ extension FacebookProvider: RoutesFactory {
                 
                 response.appendBody(string: challenge)
                 response.completed(status: .ok)
+                Log.info("Subscribe mode challenge done")
             } else {
-                Log.info("Invalid Subscribe Token");
+                Log.warning("Invalid Subscribe Token in request \(request.params())");
                 response.status = .forbidden;
             }
         } else {
@@ -38,9 +39,7 @@ extension FacebookProvider: RoutesFactory {
     }
     
     private func webhookHandler(request: HTTPRequest, response: HTTPResponse) {
-        Log.info("Facebook request")
-        Log.info(request.queryParams.description)
-        Log.info(request.postParams.description)
+        Log.info("Messenger webhook request start")
         guard let postBodyBytes = request.postBodyBytes else {
             response.completed(status: .noContent)
             return
@@ -51,7 +50,7 @@ extension FacebookProvider: RoutesFactory {
             try self.parse(json: json)
             response.completed(status: .ok)
         } catch {
-            Log.error("Can't parse requests \(error)")
+            Log.error("Can't messenger webhook request with \(error)")
             response.completed(status: .noContent)
         }
     }

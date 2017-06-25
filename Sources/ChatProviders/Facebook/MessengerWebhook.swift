@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import LoggerAPI
 import Mapper
 
 public final class MessengerWebhook {
@@ -13,6 +14,7 @@ public final class MessengerWebhook {
     }
     
     internal func parse(callback: JSON) throws -> Request {
+        Log.verbose("Start parse \(callback)")
         return try Request.mapped(json: callback)
     }
 }

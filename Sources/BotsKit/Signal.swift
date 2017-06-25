@@ -3,8 +3,6 @@
 //  BotsKit
 //
 
-import Foundation
-
 public class Signal<T> {
     fileprivate var value: T?
     fileprivate var callbacks: [(T)->Void] = []

@@ -12,14 +12,14 @@ public final class FacebookProvider: Provider {
     internal let accessToken: String
     public let secretToken: String
     
+    public let name = "Facebook"
+    public let update: Signal<Activity> = Signal()
+    
     internal let webhook: MessengerWebhook = MessengerWebhook()
-    // Good candidate to remove
-    public let update: Signal<Activity>
     
     public init(secretToken: String, accessToken: String) {
         self.secretToken = secretToken;
         self.accessToken = accessToken
-        update = Signal()
     }
     
     // Send
