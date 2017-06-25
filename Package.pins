@@ -8,6 +8,18 @@
       "version": "2.0.4"
     },
     {
+      "package": "HeliumLogger",
+      "reason": null,
+      "repositoryURL": "https://github.com/IBM-Swift/HeliumLogger",
+      "version": "1.7.0"
+    },
+    {
+      "package": "LoggerAPI",
+      "reason": null,
+      "repositoryURL": "https://github.com/IBM-Swift/LoggerAPI.git",
+      "version": "1.7.0"
+    },
+    {
       "package": "MySQL",
       "reason": null,
       "repositoryURL": "https://github.com/PerfectlySoft/Perfect-MySQL.git",
