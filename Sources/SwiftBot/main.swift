@@ -7,12 +7,12 @@ import PerfectLib
 import PerfectHTTP
 import PerfectHTTPServer
 import Foundation
+import HeliumLogger
 
-#if os(Linux)
-    Log.logger = HerokuLogger()
-#else
-    Log.logger = ConsoleLogger()
-#endif
+// Init default logger
+let log = HeliumLogger.applicationLogger()
+// Set application default logger as output for perfect logger
+Log.logger = log.perfectLogger()
 
 do {
 	// Launch the servers based on the configuration data.
@@ -31,7 +31,7 @@ do {
     // Start
     try server.start()
 } catch {
-    Log.critical(message: error.localizedDescription) // fatal error launching one of the servers
+    log.log(.error, msg: error.localizedDescription, functionName: #function, lineNum: #line, fileName: #file)
 }
 
 
