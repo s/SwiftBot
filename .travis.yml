@@ -13,6 +13,7 @@ before_install:
 
 install:
   - swift package --enable-prefetching fetch
+  - swift build
 
 script:
   - make test
