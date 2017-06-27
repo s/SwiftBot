@@ -37,12 +37,12 @@ public final class ReplyService {
             // Send
             let res = try performPOSTUrlRequest(self.urlString, data: data);
             
-            debugPrint("Response \(res)")
+            // Callback
+            callback(ReplyResponse(body: res))
         }
         catch let error {
             callback(ReplyResponse(error: error))
         }
-
     }
     
     fileprivate func performPOSTUrlRequest(_ url: String, data: Data) throws -> String {
