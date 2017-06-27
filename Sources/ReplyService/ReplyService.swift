@@ -19,17 +19,13 @@ public final class ReplyService {
         self.accessToken = accessToken
     }
     
-    public func send(replyRequest: ReplyRequest, _ callback: (_ response: ReplyResponse)->()) {
-
-        let json = [
-            "recipient": ["id": replyRequest.recepientId ],
-            "message": ["text": replyRequest.messageText]
-        ];
-        
-        sendJson(json, callback)
+    public func send(replyRequest: ReplyRequest, _ callback: (_ response: ReplyResponse)->())
+    {
+        sendJson(replyRequest.generateFacebookMessageSendJSON(), callback)
     }
     
-    fileprivate func sendJson(_ json: [String:Any], _ callback: (_ response: ReplyResponse)->()) {
+    fileprivate func sendJson(_ json: [String:Any], _ callback: (_ response: ReplyResponse)->())
+    {
         do {
             // Serialize
             let data = try JSONSerialization.data(withJSONObject: json)
@@ -45,7 +41,8 @@ public final class ReplyService {
         }
     }
     
-    fileprivate func performPOSTUrlRequest(_ url: String, data: Data) throws -> String {
+    fileprivate func performPOSTUrlRequest(_ url: String, data: Data) throws -> String
+    {
         let request = CURLRequest(url,
                                   .httpMethod(.post),
                                   .addHeader(.fromStandard(name: "Content-Type"), "application/json"),

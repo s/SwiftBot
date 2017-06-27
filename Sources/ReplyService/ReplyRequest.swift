@@ -13,3 +13,15 @@ public protocol ReplyRequest
     var recepientId : String { get }
     var messageText : String { get }
 }
+
+extension ReplyRequest {
+    
+    func generateFacebookMessageSendJSON() -> [String:Any] {
+        let json = [
+            "recipient": ["id": self.recepientId ],
+            "message": ["text": self.messageText]
+        ];
+        
+        return json;
+    }
+}
