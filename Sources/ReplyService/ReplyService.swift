@@ -12,6 +12,8 @@ import PerfectCURL
 public final class ReplyService {
     
     private let accessToken: String;
+    
+    private var urlString: String { return "https://graph.facebook.com/v2.6/me/messages?access_token=\(self.accessToken)" }
         
     public init(accessToken : String) {
         self.accessToken = accessToken
@@ -29,10 +31,11 @@ public final class ReplyService {
     
     fileprivate func sendJson(_ json: [String:Any], _ callback: (_ response: ReplyResponse)->()) {
         do {
+            // Serialize
             let data = try JSONSerialization.data(withJSONObject: json)
             
-            let url = "https://graph.facebook.com/v2.6/me/messages?access_token=\(self.accessToken)"
-            let res = try performPOSTUrlRequest(url, data: data);
+            // Send
+            let res = try performPOSTUrlRequest(self.urlString, data: data);
             
             debugPrint("Response \(res)")
         }
