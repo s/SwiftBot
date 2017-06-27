@@ -9,14 +9,17 @@ import XCTest
 final class TestProvider: Provider {
     var name: String = "TestProvider"
 
-    let update: Signal<Activity>
+    let recieveActivity: Signal<Activity>
+    internal let updateInput: SignalInput<Activity>
     
     init() {
-        update = Signal()
+        let (input, signal) = Signal<Activity>.create()
+        recieveActivity = signal
+        updateInput = input
     }
     
     func receive(activity: Activity) {
-        update.update(activity)
+        updateInput.update(activity)
     }
     
     func send(activity: Activity) {

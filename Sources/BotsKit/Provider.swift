@@ -16,7 +16,7 @@ public protocol Provider: class {
     var name: String { get }
     
     /// Provider recieve activity signal
-    var update: Signal<Activity> { get }
+    var recieveActivity: Signal<Activity> { get }
     
     /// Send activity to provider
     ///

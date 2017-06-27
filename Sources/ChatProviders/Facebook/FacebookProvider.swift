@@ -13,13 +13,18 @@ public final class FacebookProvider: Provider {
     public let secretToken: String
     
     public let name = "Facebook"
-    public let update: Signal<Activity> = Signal()
+    public let recieveActivity: Signal<Activity>
+    internal let updateInput: SignalInput<Activity>
     
     internal let webhook: MessengerWebhook = MessengerWebhook()
     
     public init(secretToken: String, accessToken: String) {
         self.secretToken = secretToken;
         self.accessToken = accessToken
+        
+        let (input, signal) = Signal<Activity>.create()
+        recieveActivity = signal
+        updateInput = input
     }
     
     // Send
@@ -80,7 +85,7 @@ extension FacebookProvider: Parser {
                                             timestamp: details.timestamp,
                                             localTimestamp: details.timestamp,
                                             text: message.text ?? "")
-                    update.update(activity)
+                    updateInput.update(activity)
                     break
                 default:
                     break

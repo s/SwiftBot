@@ -3,11 +3,15 @@
 //  BotsKit
 //
 
+
 public class Signal<T> {
     fileprivate var value: T?
     fileprivate var callbacks: [(T)->Void] = []
     
-    public init() {}
+    public class func create() -> (input: SignalInput<T>, signal: Signal<T>) {
+        let signal = Signal()
+        return (SignalInput(signal: signal), signal)
+    }
     
     public var lastValue: T? {
         return value
@@ -20,11 +24,36 @@ public class Signal<T> {
         }
     }
     
-    public func update(_ newValue: T) {
+    fileprivate func update(_ newValue: T) {
         value = newValue
         callbacks.forEach {
             $0(newValue)
         }
+    }
+}
+
+public protocol Input {
+    associatedtype InputValue
+    
+    @discardableResult
+    func update(_ newValue: InputValue) -> Bool
+}
+
+public final class SignalInput<T>: Input {
+    public typealias InputValue = T
+    fileprivate weak var signal: Signal<T>?
+    
+    fileprivate init(signal: Signal<T>) {
+        self.signal = signal
+    }
+    
+    @discardableResult
+    public func update(_ newValue: T) -> Bool {
+        guard let s = signal else {
+            return false
+        }
+        s.update(newValue)
+        return true
     }
 }
 
