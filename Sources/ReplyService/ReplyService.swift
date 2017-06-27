@@ -7,13 +7,12 @@
 //
 
 import Foundation
-import PerfectCURL
 
 public final class ReplyService {
     
     private let accessToken: String;
     
-    private var urlString: String { return "https://graph.facebook.com/v2.6/me/messages?access_token=\(self.accessToken)" }
+    private let facebookGraph = FacebookGraph()
         
     public init(accessToken : String) {
         self.accessToken = accessToken
@@ -27,27 +26,17 @@ public final class ReplyService {
     fileprivate func sendJson(_ json: [String:Any], _ callback: (_ response: ReplyResponse)->())
     {
         do {
-            // Serialize
-            let data = try JSONSerialization.data(withJSONObject: json)
+            let jsonData = try JSONSerialization.data(withJSONObject: json)
             
-            // Send
-            let res = try performPOSTUrlRequest(self.urlString, data: data);
+            let request = FacebookGraphRequest.meMessagePostRequest(accessToken: accessToken, jsonBody: jsonData)
             
-            // Callback
-            callback(ReplyResponse(body: res))
+            let response = facebookGraph.post(request: request)
+            
+            callback(ReplyResponse(body: response.body ?? ""))
         }
         catch let error {
             callback(ReplyResponse(error: error))
         }
-    }
-    
-    fileprivate func performPOSTUrlRequest(_ url: String, data: Data) throws -> String
-    {
-        let request = CURLRequest(url,
-                                  .httpMethod(.post),
-                                  .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
-                                  .postData([UInt8](data)))
-        return try request.perform().bodyString
     }
 
 }
