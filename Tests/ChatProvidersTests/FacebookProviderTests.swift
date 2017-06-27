@@ -150,8 +150,8 @@ class FacebookProviderTests : XCTestCase {
         
         do {
             try facebook.parse(json: input)
-            XCTAssertNotNil(facebook.update.lastValue)
-            let activity = facebook.update.lastValue!
+            XCTAssertNotNil(facebook.recieveActivity.lastValue)
+            let activity = facebook.recieveActivity.lastValue!
             XCTAssertEqual(activity.text, "does this work?")
             XCTAssertEqual(activity.conversation.channelId, "260317677677806")
             XCTAssertEqual(activity.conversation.activityId, "facebook")

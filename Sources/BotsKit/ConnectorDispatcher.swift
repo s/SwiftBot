@@ -9,15 +9,15 @@ import LoggerAPI
  ---------------------
  |      Provider     |
  ---------------------
- ||             ^
- || Activity    | Message to chat provider
- \/             |
+ ||                ^
+ || Activity       | Message to chat provider
+ \/                |
  ---------------------
  |     Dispatcher    |
  ---------------------
- ||             /\
- || Activity    || Replay
- \/             ||
+ ||                /\
+ || Activity       || Replay
+ \/                ||
  ----------------  ||
  |   Bot Impl   |===/
  ----------------
@@ -35,7 +35,7 @@ internal final class BotConnector {
         self.bot = bot
         self.provider = provider
         
-        self.provider.update.subscribe{ bot.dispatch(activity: $0) }
+        self.provider.recieveActivity.subscribe{ bot.dispatch(activity: $0) }
         self.bot.sendActivity.subscribe{ provider.send(activity: $0) }
     }
     
