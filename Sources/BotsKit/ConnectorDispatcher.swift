@@ -3,7 +3,7 @@
 //  BotsKit
 //
 
-import Foundation
+import LoggerAPI
 
 /*
  ---------------------
@@ -50,6 +50,7 @@ public final class ConnectorDispatcher {
     
     public func register(bot: Bot, `in` provider: Provider) {
         let connector = BotConnector(bot: bot, provider: provider)
+        Log.verbose("Connect \(bot.name) to \(provider.name) provider")
         connectors.append(connector)
     }
 }

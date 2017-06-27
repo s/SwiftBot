@@ -4,6 +4,7 @@
 //
 
 import Health
+import LoggerAPI
 import PerfectHTTP
 
 extension Health: RoutesFactory {
@@ -17,11 +18,14 @@ extension Health: RoutesFactory {
         let status = self.status.toSimpleDictionary()
         do {
             if self.status.state == .UP {
+                Log.info("Health check is ok")
                 try response.setBody(json: status).completed(status: .ok)
             } else {
+                Log.warning("Health check is down")
                 try response.setBody(json: status).completed(status: .serviceUnavailable)
             }
         } catch {
+            Log.error("Health check failed")
             response.completed(status: .internalServerError)
         }
     }

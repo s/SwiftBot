@@ -7,6 +7,8 @@ import XCTest
 @testable import BotsKit
 
 final class TestProvider: Provider {
+    var name: String = "TestProvider"
+
     let update: Signal<Activity>
     
     init() {
@@ -23,6 +25,8 @@ final class TestProvider: Provider {
 }
 
 final class TestBot: Bot {
+    var name: String = "TestBot"
+
     public let sendActivity: Signal<Activity>
     var lastActivity: Activity?
     
