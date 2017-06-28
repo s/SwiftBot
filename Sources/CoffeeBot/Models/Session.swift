@@ -20,7 +20,7 @@ internal struct Session {
     var description : String {
         get {
             let descriptions : [String] = self.coffeesRequested.map { (request) -> String in
-                return request.coffee.description
+                return request.description
             }
             return descriptions.joined(separator: "\n")
         }
