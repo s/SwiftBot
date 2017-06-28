@@ -8,5 +8,5 @@ import BotsKit
 
 internal struct CoffeeRequest {
     let person : Account
-    let coffee : Coffee
+    let coffees : [Coffee]
 }
