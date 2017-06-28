@@ -6,6 +6,10 @@
 import LoggerAPI
 import BotsKit
 
+internal protocol CoffeeBotInputProtocol {
+    func send(activity:Activity)
+}
+
 public final class CoffeeBot : Bot {
     
     //MARK: Properties
