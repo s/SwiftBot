@@ -12,12 +12,14 @@ internal protocol CoffeeBotInputProtocol {
 
 public final class CoffeeBot : Bot {
     
-    //MARK: Properties
+    //MARK: Bot Protocol Properties
     public let name = "CoffeeBot"
     public var sendActivity: Signal<Activity> = Signal()
+    
+    //MARK: Other Properties
     private let coffeeManager : CoffeeManager
     
-    //MARK: Bot Protocol
+    //MARK: Bot Protocol Methods
     public func dispatch(activity: Activity) -> DispatchResult {
         self.coffeeManager.process(activity: activity)
         return .ok
@@ -25,7 +27,16 @@ public final class CoffeeBot : Bot {
     
     //MARK: Lifecycle
     public init() {
-        self.coffeeManager = CoffeeManager()
+        let sessionService = SessionService()
+        let appointingService = AppointingService()
+        let spellCheckerService = SpellCheckingService()
+        let entityRecognitionService = EntityRecognitionService()
+        let textProcessingService = TextProcessingService(spellCheckerService: spellCheckerService,
+                                                          entityRecognitionService: entityRecognitionService)
+        
+        self.coffeeManager = CoffeeManager(textProcessingService: textProcessingService,
+                                           appointingService:appointingService,
+                                           sessionService:sessionService)
         self.coffeeManager.botDelegate = self
     }
 }

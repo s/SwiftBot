@@ -13,11 +13,16 @@ class CoffeeManager {
     
     //MARK: Properties
     fileprivate let session : Session
+    fileprivate let textProcessingService : TextProcessingService
+    fileprivate let appointingService : AppointingService
+    fileprivate let sessionService : SessionService
     weak var botDelegate : CoffeeBot?
     
     //MARK: Lifecycle
-    init() {
-        self.session = Session()
+    init(textProcessingService:TextProcessingService, appointingService:AppointingService, sessionService:SessionService) {
+        self.textProcessingService = textProcessingService
+        self.appointingService = appointingService
+        self.sessionService = sessionService
     }
     
     //MARK: Private
