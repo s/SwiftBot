@@ -4,6 +4,7 @@
 //
 
 internal struct Coffee {
+    let amount : Int
     let type : CoffeeType
     let additions : [CoffeeAddition]
     var description : String {
