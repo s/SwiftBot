@@ -8,7 +8,7 @@ import BotsKit
 
 internal struct Session {
     
-    let coffeesRequested : [CoffeeRequest] = []
+    var coffeesRequested : [CoffeeRequest] = []
     var membersReplied : [Account] {
         get {
             return self.coffeesRequested.map({ (request) -> Account in
