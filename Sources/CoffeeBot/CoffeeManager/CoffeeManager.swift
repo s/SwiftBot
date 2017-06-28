@@ -5,6 +5,9 @@
 
 import Foundation
 import BotsKit
+internal protocol CoffeeManagerProtocol {
+    func process(activity:Activity)
+}
 
 class CoffeeManager {
     
@@ -32,7 +35,8 @@ class CoffeeManager {
     }
 }
 
-extension CoffeeManager : CoffeeManagerInputProtocol {
+extension CoffeeManager : CoffeeManagerProtocol {
+    
     func process(activity: Activity) {
         self.refreshSession()
         
