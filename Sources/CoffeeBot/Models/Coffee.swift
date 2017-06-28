@@ -12,7 +12,7 @@ internal struct Coffee {
             let additionsDescription = self.additions.map { (addition) -> String in
                 return addition.rawValue
             }
-            return "\(self.type.rawValue) with \(additionsDescription)"
+            return "\(self.type.rawValue) with \(additionsDescription.joined(separator:" "))"
         }
     }
 }
