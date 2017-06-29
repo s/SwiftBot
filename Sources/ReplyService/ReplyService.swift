@@ -32,7 +32,10 @@ public final class ReplyService {
             
             let response = facebookGraph.post(request: request)
             
-            callback(ReplyResponse(body: response.body ?? ""))
+            switch response {
+            case .body (let text):  callback(ReplyResponse(body: text))
+            case .error(let error): callback(ReplyResponse(error: error))
+            }
         }
         catch let error {
             callback(ReplyResponse(error: error))

@@ -31,10 +31,10 @@ final class FacebookGraph {
                                               contentTypeValue: request.contentType,
                                               httpMethod: request.httpMethod.description);
             
-            return FacebookGraphResponse(body: body)
+            return .body(text: body)
         }
         catch let error {
-            return FacebookGraphResponse(error: error)
+            return .error(error: error)
         }
     }
     

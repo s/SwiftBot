@@ -8,17 +8,9 @@
 
 import Foundation
 
-struct FacebookGraphResponse {
-    public let body : String?
-    public let error: Error?
+enum FacebookGraphResponse {
+
+    case body(text: String)
     
-    init(body: String) {
-        self.body  = body
-        self.error = nil;
-    }
-    
-    init(error: Error) {
-        self.body  = nil;
-        self.error = error
-    }
+    case error(error: Error)
 }
