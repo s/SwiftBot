@@ -20,11 +20,8 @@ public final class ReplyService {
     
     public func send(replyRequest: ReplyRequest, _ callback: (_ response: ReplyResponse)->())
     {
-        sendJson(replyRequest.generateFacebookMessageSendJSON(), callback)
-    }
-    
-    fileprivate func sendJson(_ json: [String:Any], _ callback: (_ response: ReplyResponse)->())
-    {
+        let json = replyRequest.generateFacebookMessageSendJSON()
+        
         do {
             let request = try FacebookGraphRequest.meMessagePostRequest(accessToken: accessToken, json: json)
             
@@ -39,5 +36,4 @@ public final class ReplyService {
             callback(ReplyResponse(error: error))
         }
     }
-
 }
