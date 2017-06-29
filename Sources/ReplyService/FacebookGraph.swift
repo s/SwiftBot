@@ -14,7 +14,7 @@ final class FacebookGraph {
     let baseUrl = "https://graph.facebook.com/v2.6"
     
     private func buildUrl(request: FacebookGraphRequest) -> URL? {
-        guard var urlComponents = URLComponents(string: baseUrl) else { return nil }
+        guard var urlComponents = URLComponents(string: baseUrl) else { fatalError("Please check baseUrl, it should be valid url") }
         
         urlComponents.path += request.path
         urlComponents.queryItems = request.params.map({ (key, value) in URLQueryItem(name: key, value: value) })
