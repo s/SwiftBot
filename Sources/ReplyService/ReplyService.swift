@@ -26,9 +26,7 @@ public final class ReplyService {
     fileprivate func sendJson(_ json: [String:Any], _ callback: (_ response: ReplyResponse)->())
     {
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: json)
-            
-            let request = FacebookGraphRequest.meMessagePostRequest(accessToken: accessToken, jsonBody: jsonData)
+            let request = try FacebookGraphRequest.meMessagePostRequest(accessToken: accessToken, json: json)
             
             let response = facebookGraph.post(request: request)
             

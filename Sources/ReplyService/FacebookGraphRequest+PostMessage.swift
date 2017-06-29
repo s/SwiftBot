@@ -10,11 +10,15 @@ import Foundation
 
 extension FacebookGraphRequest
 {
-    static func meMessagePostRequest(accessToken: String, jsonBody: Data) -> FacebookGraphRequest {
-        return FacebookGraphRequest(path: "/me/messages",
-                                    params: ["access_token": accessToken],
-                                    body: jsonBody,
-                                    contentType: "application/json",
-                                    httpMethod: .post)
+    static func meMessagePostRequest(accessToken: String, json: [String:Any]) throws -> FacebookGraphRequest {
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: json)
+            
+            return FacebookGraphRequest(path: "/me/messages",
+                                        params: ["access_token": accessToken],
+                                        body: jsonData,
+                                        contentType: "application/json",
+                                        httpMethod: .post)
+        }
     }
 }
