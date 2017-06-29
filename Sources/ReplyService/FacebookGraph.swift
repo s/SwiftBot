@@ -9,27 +9,27 @@
 import Foundation
 import PerfectCURL
 
-enum FacebookGraphRequestHttpMethod: Hashable, CustomStringConvertible {
+struct FacebookGraphRequest {
     
-    case get
-    case post
-    
-    public var description: String {
-        switch self {
-        case .get:      return "GET"
-        case .post:     return "POST"
+    enum HttpMethod: Hashable, CustomStringConvertible {
+        
+        case get
+        case post
+        
+        public var description: String {
+            switch self {
+            case .get:      return "GET"
+            case .post:     return "POST"
+            }
         }
     }
-}
-
-struct FacebookGraphRequest {
     
     let path: String                // /me/messages
     let params: [String: String]    // access_token:xxx
     let body: Data                  // might be json
     let contentType: String         // application/json
     
-    let httpMethod: FacebookGraphRequestHttpMethod
+    let httpMethod: HttpMethod
     
     static func meMessagePostRequest(accessToken: String, jsonBody: Data) -> FacebookGraphRequest {
         return FacebookGraphRequest(path: "/me/messages",
