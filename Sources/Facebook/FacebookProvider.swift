@@ -7,6 +7,7 @@ import Foundation
 import BotsKit
 import Mapper
 import ReplyService
+import LoggerAPI
 
 public final class FacebookProvider: Provider {
     internal let accessToken: String
@@ -33,11 +34,11 @@ public final class FacebookProvider: Provider {
     public func send(activity: Activity) {
         replyService.send(replyRequest: activity) { (responce) in
             if let error = responce.error {
-                debugPrint("Error: \(error)")
+                Log.error(error.localizedDescription);
             }
             
             if let body = responce.body {
-                debugPrint("Body: \(body)")
+                Log.info(body)
             }
         }
     }
