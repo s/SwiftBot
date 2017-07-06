@@ -25,6 +25,10 @@ final class TestProvider: Provider {
     func send(activity: Activity) {
         
     }
+    
+    func parse(data: Data) throws {
+        
+    }
 }
 
 final class TestBot: Bot {

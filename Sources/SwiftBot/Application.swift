@@ -5,7 +5,7 @@
 
 import Foundation
 import BotsKit
-import ChatProviders
+import Facebook
 import EchoBot
 import Health
 

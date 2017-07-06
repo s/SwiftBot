@@ -6,7 +6,7 @@
 import Foundation
 import PerfectHTTP
 import PerfectCURL
-import ChatProviders
+import Facebook
 import LoggerAPI
 
 extension FacebookProvider: RoutesFactory {
