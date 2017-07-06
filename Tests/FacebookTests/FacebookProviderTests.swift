@@ -6,7 +6,7 @@
 import XCTest
 import Foundation
 import BotsKit
-@testable import ChatProviders
+@testable import Facebook
 
 #if os(Linux)
 extension FacebookProviderTests {

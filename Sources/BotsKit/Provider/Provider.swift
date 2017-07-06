@@ -22,6 +22,12 @@ public protocol Provider: class {
     ///
     /// - Parameter activity: response from bot to send to the provider
     func send(activity: Activity)
+    
+    /// Parse input data from hook request
+    ///
+    /// - Parameter data: input request data
+    /// - Throws: throw ProviderError
+    func parse(data: Data) throws
 }
 
 public enum ProviderError: Error {

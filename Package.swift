@@ -10,7 +10,7 @@ let package = Package(
             name:"BotsKit",
             dependencies:[]),
         Target(
-            name:"ChatProviders",
+            name:"Facebook",
             dependencies:["Mapper", "BotsKit"]),
         Target(
             name:"Storage",
@@ -20,7 +20,7 @@ let package = Package(
             dependencies:["BotsKit"]),
         Target(
             name:"SwiftBot",
-            dependencies:["ChatProviders","Storage","EchoBot"])
+            dependencies:["Facebook","Storage","EchoBot"])
     ],  
 	dependencies: [
 		.Package(url: "https://github.com/PerfectlySoft/Perfect-HTTPServer.git", majorVersion: 2),

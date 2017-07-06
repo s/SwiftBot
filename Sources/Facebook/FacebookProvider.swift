@@ -57,7 +57,7 @@ public final class FacebookProvider: Provider {
     }
 }
 
-extension FacebookProvider: Parser {
+extension FacebookProvider {
     public func parse(data: Data) throws {
         guard let json = try? JSONSerialization.jsonObject(with: data, options: []) else {
             throw ProviderError.cantParseJSON(data)
