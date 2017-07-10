@@ -41,10 +41,8 @@ final class TestBot: Bot {
         sendActivity = Signal()
     }
     
-    @discardableResult
-    func dispatch(activity: Activity) -> DispatchResult {
+    func dispatch(activity: Activity) {
         lastActivity = activity
-        return .ok
     }
 }
 
