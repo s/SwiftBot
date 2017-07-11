@@ -17,8 +17,7 @@ extension FacebookGraphRequest
             return FacebookGraphRequest(path: "/me/messages",
                                         params: ["access_token": accessToken],
                                         body: jsonData,
-                                        contentType: "application/json",
-                                        httpMethod: .post)
+                                        contentType: "application/json")
         }
     }
 }

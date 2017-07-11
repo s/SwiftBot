@@ -12,7 +12,7 @@ public final class ReplyService {
     
     private let accessToken: String;
     
-    private let facebookGraph = FacebookGraph()
+    private let facebookGraph = FacebookGraph(httpTransporter: CURLHttpTransporter())
         
     public init(accessToken : String) {
         self.accessToken = accessToken
