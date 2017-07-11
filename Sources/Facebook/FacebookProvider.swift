@@ -10,7 +10,7 @@ import PerfectCURL
 
 public final class FacebookProvider: Provider {
     internal let accessToken: String
-    public let secretToken: String
+    internal let secretToken: String
     
     public let name = "Facebook"
     public let recieveActivity: Signal<Activity>
@@ -57,7 +57,22 @@ public final class FacebookProvider: Provider {
     }
 }
 
+/// This extension add WebHook releated methods. To check registration challenge, parse
+/// hook message, etc
 extension FacebookProvider {
+    public enum ChallengeResult {
+        case ok(String)
+        case error(String)
+    }
+    
+    public func take(challenge: String, token: String) -> ChallengeResult {
+        if token == self.secretToken {
+            return ChallengeResult.ok(challenge)
+        } else {
+            return ChallengeResult.error("Wrong challenge token \(token)")
+        }
+    }
+    
     public func parse(data: Data) throws {
         guard let json = try? JSONSerialization.jsonObject(with: data, options: []) else {
             throw ProviderError.cantParseJSON(data)
@@ -65,7 +80,7 @@ extension FacebookProvider {
         try parse(json: json)
     }
     
-    public func parse(json: JSON) throws {
+    internal func parse(json: JSON) throws {
         let request = try webhook.parse(callback: json)
         request.entry.forEach{
             let conversation = Conversation(members: [], //?

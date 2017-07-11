@@ -22,12 +22,16 @@ extension FacebookProvider: RoutesFactory {
             Log.info("Starting subscribe mode challenge")
             
             if let token = request.param(name: "hub.verify_token"),
-                let challenge = request.param(name: "hub.challenge"),
-                token == self.secretToken {
-                
-                response.appendBody(string: challenge)
-                response.completed(status: .ok)
-                Log.info("Subscribe mode challenge done")
+                let challenge = request.param(name: "hub.challenge") {
+                switch (self.take(challenge: challenge, token: token)) {
+                case .ok(let answer):
+                    response.appendBody(string: answer)
+                    response.completed(status: .ok)
+                    Log.info("Subscribe mode challenge done")
+                case .error(let error):
+                    response.status = .forbidden;
+                    Log.warning(error)
+                }
             } else {
                 Log.warning("Invalid Subscribe Token in request \(request.params())");
                 response.status = .forbidden;
@@ -46,8 +50,7 @@ extension FacebookProvider: RoutesFactory {
         }
         let postData = Data(bytes: postBodyBytes)
         do {
-            let json = try JSONSerialization.jsonObject(with: postData, options: [])
-            try self.parse(json: json)
+            try self.parse(data: postData)
             response.completed(status: .ok)
         } catch {
             Log.error("Can't messenger webhook request with \(error)")
