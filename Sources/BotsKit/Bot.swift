@@ -15,11 +15,8 @@ public protocol Bot: class {
     /// Signal use for bot feedback
     var sendActivity: Signal<Activity> { get }
     
-    @discardableResult
-    func dispatch(activity: Activity) -> DispatchResult
-}
-
-public enum DispatchResult {
-    case ok
-    case error(Error)
+    /// Process income message
+    ///
+    /// - Parameter activity: income activity
+    func dispatch(activity: Activity)
 }
