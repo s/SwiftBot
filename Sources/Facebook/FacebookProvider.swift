@@ -6,7 +6,8 @@
 import Foundation
 import BotsKit
 import Mapper
-import PerfectCURL
+import ReplyService
+import LoggerAPI
 
 public final class FacebookProvider: Provider {
     internal let accessToken: String
@@ -17,10 +18,12 @@ public final class FacebookProvider: Provider {
     internal let updateInput: SignalInput<Activity>
     
     internal let webhook: MessengerWebhook = MessengerWebhook()
+    internal let replyService: ReplyService
     
     public init(secretToken: String, accessToken: String) {
-        self.secretToken = secretToken;
+        self.secretToken = secretToken
         self.accessToken = accessToken
+        self.replyService = ReplyService(accessToken: accessToken)
         
         let (input, signal) = Signal<Activity>.create()
         recieveActivity = signal
@@ -29,31 +32,15 @@ public final class FacebookProvider: Provider {
     
     // Send
     public func send(activity: Activity) {
-        
-        do {
-            let json = [
-                "recipient": ["id": activity.recipient.id ],
-                "message": ["text": activity.text]
-            ];
+        replyService.send(replyRequest: activity) { (responce) in
+            if let error = responce.error {
+                Log.error(error.localizedDescription);
+            }
             
-            let data = try JSONSerialization.data(withJSONObject: json)
-            
-            let url = "https://graph.facebook.com/v2.6/me/messages?access_token=\(self.accessToken)"
-            let res = try performPOSTUrlRequest(url, data: data);
-            
-            debugPrint("Response \(res)")
+            if let body = responce.body {
+                Log.info(body)
+            }
         }
-        catch let error {
-            fatalError("\(error)")
-        }
-    }
-    
-    fileprivate func performPOSTUrlRequest(_ url: String, data: Data) throws -> String {
-        let request = CURLRequest(url,
-                                  .httpMethod(.post),
-                                  .addHeader(.fromStandard(name: "Content-Type"), "application/json"),
-                                  .postData([UInt8](data)))
-        return try request.perform().bodyString
     }
 }
 

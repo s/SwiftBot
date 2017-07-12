@@ -11,7 +11,10 @@ let package = Package(
             dependencies:[]),
         Target(
             name:"Facebook",
-            dependencies:["Mapper", "BotsKit"]),
+            dependencies:["Mapper", "BotsKit", "ReplyService"]),
+        Target(
+            name:"ReplyService",
+            dependencies:["BotsKit"]),
         Target(
             name:"Storage",
             dependencies:[]),
